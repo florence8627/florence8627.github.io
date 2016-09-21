@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SOMVR</title>
+    <script type="text/javascript" src="lib/three.js"></script>
+    <script type="text/javascript" src="lib/d3.v3.min.js"></script>
+    <script type="text/javascript" src="lib/stats.js"></script>
+    <script type="text/javascript" src="lib/dat.gui.js"></script>
+    <script type="text/javascript" src="lib/OrbitControls.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="lib/d3.hexbin.v0.min.js"></script>	
+    <script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
+    <script type="text/javascript" src="lib/DeviceOrientationControls.js"></script>
+    <script type="text/javascript" src="lib/OrbitControls.js"></script>
+    <script type="text/javascript" src="lib/ParallaxBarrierEffect.js"></script>
+    <script type="text/javascript" src="lib/StereoEffect.js"></script>
+    <script type="text/javascript" src="lib/VREffect.js"></script>
+    <script type="text/javascript" src="lib/WebVR.js"></script>
+    <script type="text/javascript" src="lib/VRControl.js"></script>
+    <script src="lib/leap-0.6.4.min.js"></script>
+    <script src="lib/leap-plugins-0.1.11pre.js"></script>
+    <script src="lib/helper.js"></script>
+    <script src="lib/Detector.js"></script>
+    <script type="text/javascript" src="lib/LeapObjectControls.js"></script>
+    <script type="text/javascript" src="lib/LeapCameraControls.js"></script>
+
+
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+
+           
+        }
+
+        .text{
+            color:white;
+            background-color: black;
+            font-size:9pt;
+            font-family: Arial;
+        }
+        #pointresult{
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            width: 300px;
+            height: 50px;
+            color:white;
+            font-size:13pt;
+            font-family: Arial;
+            z-index: 999;
+            text-align:center;
+            border-radius: 15px;
+    
+        }
+
+        
+    </style>
+</head>
+<body>
+
+
+
+<div id="3dscatterplot" >
+<div id="pointresult">
+</div>
+</div>
+
+
+<!-- Javascript code that runs our Three.js examples -->
+ 
+<!-- <script type="text/javascript" src="torus.js"></script> -->
+<script type="text/javascript" src="3dscatterplotVR.js"></script>
+</body>
+</html>

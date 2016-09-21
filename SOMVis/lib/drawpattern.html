@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>Draw Patterns</title>
+		
+		<script type="text/javascript" src="lib/d3.v3.min.js"></script>
+		<script type="text/javascript" src="lib/d3.hexbin.v0.min.js"></script>	
+		<script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+	    <div class="header">
+			Draw and Save Patterns
+        </div>
+		<div class="hint">Perception Study of 3D topology. Draw patterns by mouse clicks on the map </div>
+
+		<div class="hint">          
+        <input type="text" id="RowInput" placeholder="Enter # of rows (eg. 30)">
+        x
+        <input type="text" id="ColInput" placeholder="Enter # of cols (eg. 15)">
+        <input name="Submit"  type="submit" value="Draw Map" onclick="handleClick()" >
+        <input name="Submit"  type="submit" value="Save Map" onclick="SaveAsCSV()" >
+	    </div>
+
+		<div id="chart"></div>
+		<div id="control" style="visibility:hidden">
+		<img id="leftpan" src="image/left.png" height="22px" width="22px" title="left "/>
+        <img id="rightpan" src="image/right.png" height="22px" width="22px" title="right"/>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="uppan" src="image/up.png" height="22px" width="22px" title="up"/>
+        <img id="downpan" src="image/down.png" height="22px" width="22px" title="down" />
+         &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="upleft" src="image/up-left.png" height="22px" width="22px" title="up-left"/>
+        <img id="upright" src="image/up-right.png" height="22px" width="22px" title="up-right" />
+         &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="downleft" src="image/down-left.png" height="22px" width="22px" title="down-left"/>
+        <img id="downright" src="image/down-right.png" height="22px" width="22px" title="down-right" />
+        </div>
+
+		
+		<script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
+		<script type="text/javascript" src="lib/FileSaver.min.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+
+   
+	</body>
+</html>

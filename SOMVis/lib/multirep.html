@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>2D Static Repetition</title>
+		
+		<script type="text/javascript" src="lib/d3.v3.min.js"></script>
+		<script type="text/javascript" src="lib/d3.hexbin.v0.min.js"></script>	
+		<script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+	    <div class="header">
+			Condition 3: 2D Static Repetition
+
+			<div class="hint">Self-Organizing Map with 2D reflow interaction for representing torus topology </div>
+		    <div class="hint">          
+            <input type="text" id="RowInput" placeholder="Enter # of rows">
+            x
+            <input type="text" id="ColInput" placeholder="Enter # of cols">
+            <input name="Submit" id="loadbutton" type="submit" value="Load Map Pattern" >
+            <input type="file" id="outputfileinput" value="Load Map Patterns" style="visibility:hidden" onchange="LoadOutputFiles(this.files)" >
+		    </div>
+        </div>
+		<div id="chart" style="position:absolute; top:105px; left:20px"></div>
+		<div id="chart" style="position:absolute; top:105px; left:310px"></div>
+		<div id="chart" style="position:absolute; top:105px; left:600px"></div>
+		<div id="chart" style="position:absolute; top:605px; left:20px"></div>
+		<div class="centerchart" id="chart" style="position:absolute; top:605px; left:310px"></div>
+		<div id="chart" style="position:absolute; top:605px; left:600px"></div>
+		<div id="chart" style="position:absolute; top:1105px; left:20px"></div>
+		<div id="chart" style="position:absolute; top:1105px; left:310px"></div>
+		<div id="chart" style="position:absolute; top:1105px; left:600px"></div>
+		<script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+
+   
+	</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>3D Torus</title>
+    <script type="text/javascript" src="lib/three.js"></script>
+    <script type="text/javascript" src="lib/d3.v3.min.js"></script>
+    <script type="text/javascript" src="lib/stats.js"></script>
+    <script type="text/javascript" src="lib/dat.gui.js"></script>
+    <script type="text/javascript" src="lib/OrbitControls.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="lib/d3.hexbin.v0.min.js"></script>	
+    <script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
+   
+
+
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+
+           
+        }
+        #chart{
+        	position:absolute;
+        	left:0px;
+        	top:0px;
+        	z-index: 999;
+        	background-color: black
+        }
+        #torus{
+            position:absolute;
+            left:300px;
+            top:20px;
+            z-index: 888;
+
+        }
+
+        
+    </style>
+</head>
+<body>
+
+<div id="Stats-output">
+</div>
+<!-- Div which will hold the Output -->
+<div id="chart">
+</div>
+<div id="torus">
+</div>
+
+<div id="3dscatterplot" >
+</div>
+<div id="control" style="visibility:hidden">
+<img id="leftpan" src="image/left.png" height="22px" width="22px" title="left "/>
+<img id="rightpan" src="image/right.png" height="22px" width="22px" title="right"/>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<img id="uppan" src="image/up.png" height="22px" width="22px" title="up"/>
+<img id="downpan" src="image/down.png" height="22px" width="22px" title="down" />
+ &nbsp;&nbsp;&nbsp;&nbsp;
+<img id="upleft" src="image/up-left.png" height="22px" width="22px" title="up-left"/>
+<img id="upright" src="image/up-right.png" height="22px" width="22px" title="up-right" />
+ &nbsp;&nbsp;&nbsp;&nbsp;
+<img id="downleft" src="image/down-left.png" height="22px" width="22px" title="down-left"/>
+<img id="downright" src="image/down-right.png" height="22px" width="22px" title="down-right" />
+</div>
+<!-- Javascript code that runs our Three.js examples -->
+ 
+<script type="text/javascript" src="torus.js"></script>
+<script type="text/javascript" src="3dscatterplot.js"></script>
+<script type="text/javascript" src="2dsom.js"></script>
+</body>
+</html>

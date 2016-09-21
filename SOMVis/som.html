@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>2D Interactive/Static</title>
+		
+		<script type="text/javascript" src="lib/d3.v3.min.js"></script>
+		<script type="text/javascript" src="lib/d3.hexbin.v0.min.js"></script>	
+		<script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+	    <div class="header">
+			Condition 1/2: 2D Interactive/Static 
+
+			<div class="hint">Self-Organizing Map with 2D reflow interaction for representing torus topology </div>
+
+			<div class="hint">          
+            <input type="text" id="RowInput" placeholder="Enter # of rows (eg. 30)">
+            x
+            <input type="text" id="ColInput" placeholder="Enter # of cols (eg. 15)">
+            <input name="Submit" id="loadbutton" type="submit" value="Load Map Pattern" >
+            <input type="file" id="outputfileinput" value="Load Map Patterns" style="visibility:hidden" onchange="LoadOutputFiles(this.files)" >
+		    </div>
+			
+			<div id= "description" class="hint" style="visibility:hidden">
+				<table style="border: solid 1px;">
+				<tr><td>Up: t &nbsp;&nbsp;</td><td> Down: g &nbsp;&nbsp;</td><td> Left: f &nbsp;&nbsp;</td><td> Right: h &nbsp;&nbsp; </td></tr> 
+				<tr><td>UpLeft: r &nbsp;&nbsp; </td><td>UpRight: y &nbsp;&nbsp; </td><td>DownLeft: v &nbsp;&nbsp; </td><td>DownRight: b</td></tr>
+				</table>
+		    </div>
+		 </div>
+		<div id="chart"></div>
+		<div id="control" style="visibility:hidden">
+		<img id="leftpan" src="image/left.png" height="22px" width="22px" title="left "/>
+        <img id="rightpan" src="image/right.png" height="22px" width="22px" title="right"/>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="uppan" src="image/up.png" height="22px" width="22px" title="up"/>
+        <img id="downpan" src="image/down.png" height="22px" width="22px" title="down" />
+         &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="upleft" src="image/up-left.png" height="22px" width="22px" title="up-left"/>
+        <img id="upright" src="image/up-right.png" height="22px" width="22px" title="up-right" />
+         &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="downleft" src="image/down-left.png" height="22px" width="22px" title="down-left"/>
+        <img id="downright" src="image/down-right.png" height="22px" width="22px" title="down-right" />
+        </div>
+		<script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+
+   
+	</body>
+</html>

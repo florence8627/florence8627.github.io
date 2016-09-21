@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="robots" content="index, all" />
+    <title>TAPPAS 3D Test</title>
+    <link rel="stylesheet" href="Cesium/ol.css" type="text/css">
+	<link rel="stylesheet" href="style.css" type="text/css">
+  <body> 
+  <div id="centerColumn">
+  <div id="header">
+    <h1>TAPPAS 3D-Vis Evaluation</h1>
+  </div>
+  <!--//end #headern//-->
+  <div id="nav">
+    <ul>
+     <!--  <li><a href-"#">Home</a></li> -->
+    </ul>
+  </div>
+  <!--//end #nav//-->
+  <h2>Aim</h2>
+  <p>The overall purpose of TAPPAS visualization is to help the users to abstract, analyse and compare the following information:
+(1)	3D particle locations (longitude, latitude, altitude)  
+(2)	Particle density 
+(3)	Particle dispersion, i.e., temporal variations of both particle densities and 3D locations.
+</p>
+  <h2>Visualization Tasks</h2>
+  <p>Given that in the existing TAPPAS web application, temporal information is visualized through a time slider + animation, the longitude and latitude information can be easily projected on the map, the specific visualization tasks at this stage will be investigating an effective way to visualize:
+<ul>
+        <li>Particle altitude</li>
+        <li>Particle density</li>
+</ul> 
+ </p>
+ <h2>Proposed Solutions</h2>
+ HYSPLIT model outputs both concentration and 3D particle locations for each simulation run. If we simply plot
+ the 3D particle locations, the density information can be represented by the number of particles dispersed in a region, and particle altitude can be examined through user interaction (eg. tilting the earth). However, due to occlusion problem of the 3D particles, it is difficult to discern
+ both the density and altitude information in a single static visualization. At the same time, HYSPLIT outputs the concentration (via polygon data) and 3D particle locations (via point data) as two seperate files (using different resolutions and representations*), so the real problem is 
+ <font style="color:red"> how to combine and relate the two data sources (i.e. concentration polygons and particle location points) in the same visualization.</font> Different approaches are proposed here for further evaluation.
+ 
+  <ul>
+    
+    <li><font style="font-weight:bold">Employ combined overlays:</font> In the 2D view, simply combine two datasets as two layers and use lighter color to indicate higher altitude. In the 3D view, combine the 3D particle view with the 2D contour-based concentration overlay projected on the ground level.
+	<p>
+	
+      <button onclick="ViewSwitch(ol3d1)">2D/3D Switch</button>
+      <button onclick="tiltup(ol3d1)">Tilt Up</button>
+      <button onclick="tiltdown(ol3d1)">Tilt Down</button>
+	  <font style="color:red">(Use Alt+Shift+Mouse Drag for 3d navigation)</font>
+
+    <div id="map1" > 	  
+	</div>
+    </p>
+	</li>
+   
+	<li><font style="font-weight:bold">Employ different visual cues for showing density information:</font> e.g. colours, shapes, textures. Over here, the HYSPLIT particle output has to be modified slightly for color coding. For each particle, 
+	we need to know which concentration polygon it falls in. A python GIS library called shapely is used here to decide the concentration polygons of particles. <font style="color:red"> In the visualization, the redder the color, the higher the concentration. The lighter
+	the color, the higher the altitude. Also larger particle size indicates higher concentration.</font>
+	<p>
+	  <button onclick="ViewSwitch(ol3d2)">2D/3D Switch</button>
+      <button onclick="tiltup(ol3d2)">Tilt Up</button>
+      <button onclick="tiltdown(ol3d2)">Tilt Down</button>
+	  <font style="color:red">(Use Alt+Shift+Mouse Drag for 3d navigation)</font>
+	<div id="map2" > 	  
+	</div>
+    </p>
+	</li> 
+	<li><font style="font-weight:bold">Employ multiple coordinated 3D/2D views: </font>e.g. 3D view showing particle elevation, together with 2D view showing dispersion profile.</li>
+	<li><font style="font-weight:bold">Employ additional user interaction:</font> (1) for linking views (2) for data navigation (e.g. tool tip).</li>
+  </ul>
+ 
+  <div id="footer"> <a target="_blank" href="http://validator.w3.org/" title="W3C HTML Validation">XHTML</a> | <a target="_blank" href="http://jigsaw.w3.org/css-validator/validator-uri.html" title="W3C CSS Validation">CSS</a> | <a target="_blank" href="http://www.w3.org/TR/WCAG10/" title="Web Content Accessibility Guidelines">WCAG</a> | <a target="_blank" rel="nofollow" href="http://www.csstinderbox.com">The CSS Tinderbox</a> </div>
+  <!--//end #footer//-->
+</div>
+<!--//end #centerColumn//-->
+
+	
+    <script src="Cesium/ol.js"></script>
+    <script src="Cesium/Cesium.js"></script>
+    <script src="Cesium/ol3cesium.js"></script>
+    <script src="main.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>SOM + PCA</title>
+		
+		<script type="text/javascript" src="lib/d3.v3.min.js"></script>
+		<script type="text/javascript" src="lib/d3.hexbin.v0.min.js"></script>	
+		<script src="lib/d3.tip.v0.6.3.js"></script>
+		<script type="text/javascript" src="lib/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="lib/jquery.ui.js"></script>
+        <link rel="stylesheet" href="lib/jquery-ui.css">
+
+		<style type="text/css">
+			body {
+				margin: 0px; 
+				overflow: hidden; 
+				font-family: "Helvetica Neue", Helvetica; 
+				font-size: 9px;
+			}
+            .page{
+
+			
+
+			}
+			.header {
+			    margin-top: 20px;
+				margin-left: 20px;
+				font-size: 36px; 
+				font-weight: 300; 
+				display: block; 
+				z-index: 1; 
+				text-shadow: 0 1px 0 #fff; 
+			}
+			.hint {
+				width: 1280px; 
+				right: 0px; 
+				color: rgb(153, 153, 153); 
+				font-size: 12px;
+				padding-bottom: 20px;
+			}
+
+			.hr-style {
+			   border: 0;
+			   height: 2px;
+			   width: 80%;
+			   color: #E8E8E8;
+			   background-color: #E8E8E8;
+			}
+			.axis path,
+			.axis line {
+			  fill: none;
+			  stroke: #000;
+			  shape-rendering: crispEdges;
+			}
+
+			
+			.d3-tip {
+			  line-height: 1;
+			  font-weight: bold;
+			  padding: 12px;
+			  background: rgba(0, 0, 0, 0.8);
+			  color: #fff;
+			  border-radius: 2px;
+			}
+             #cps{
+			margin-left: 30px;
+			margin-right: 30px;
+			height:600px;
+			
+			}
+		   .hexagon{
+			cursor:crosshair;
+			}
+	
+		</style>
+	</head>
+	<body>
+	    <div class="header">
+			SOM + PCA
+			<div class="hint">Heatmaps showing distributions.  Choose SOM visualization from 
+  <select id="choosecolor">
+  <option id = "DomPor" value="DomPor">DomPor</option>
+  <option id = "MaxPor" value="MaxPor">MaxPor</option>
+  <option id = "VoidFracgtio" value="VoidFracgtio">VoidFracgtio</option>
+   <option id = "Surface_gra" value="Surface_gra">Surface_gra</option>
+  <option id = "Surface_vo" value="Surface_vo">Surface_vo</option>
+  <option id = "Color" value="Color">SimilarityColorCoding</option> 
+  <option id = "Component" value ="Component"> ADD Component Planes</option>
+  </select>  
+  <img id="colorwheel" src="lib/colorwheel.jpg" alt="Mountain View" width="25px" height="25px" />
+  </div>
+		</div>
+		<article class="page">
+
+		<svg id="som" width="500" height="400"></svg>
+		<svg id="scatterplot" width="610" height="500"></svg>
+		<div id="cps">
+
+		</div>
+		</article>
+		<script type="text/javascript" src="script.js"></script>
+
+	</body>
+</html>
