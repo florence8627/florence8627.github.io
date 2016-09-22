@@ -1,9 +1,10 @@
-	var selectedVariable = [];
+	var selectedVariable = ["","",""];
 	var gui = new dat.GUI();
 	var viscontrol = gui.addFolder('3D Visualisation');
 	var stereocontrol = gui.addFolder('Stereo Effect');
   var vrcontrol = gui.addFolder('VR Effect');
 	var loaddata = gui.addFolder("Load Data");
+  var loadcsv
 
 	function LoadFiles(files) {
 		var file = files[0];
@@ -21,7 +22,7 @@
 		     	for(var j = 0; j<csvCols.length; j++){
                     if(i==0)
                     {
-                     rowstr = rowstr + "<td> <input type='checkbox' class='checkbox' id='"+csvCols[j]+"' onclick = PickVariable(this.id,'"+file.name+"')></br>"+csvCols[j]+"</td>";
+                     rowstr = rowstr + "<td> <input type='checkbox' class='box' id='"+csvCols[j]+"' onclick = PickVariable(this.id,'"+file.name+"')></br>"+csvCols[j]+"</td>";
                     }
                     else{
                      rowstr = rowstr + "<td>"+csvCols[j]+"</td>";
@@ -31,7 +32,7 @@
 		     	rowstr = rowstr + "</tr>";
 		     	$("#csvtable").append(rowstr);
 		     	$("#loadedcsvfile").css("visibility","visible");         
-                $("#loadedcsvfile").css("left","20px").css("top","20px");
+          $("#loadedcsvfile").css("left","30px").css("bottom","20px");
 
 		     }
 		    
@@ -48,8 +49,13 @@
 
 	}
     function PickVariable(id,filename){
+
+      console.log(selectedVariable.length);
     	if(selectedVariable.length<=3){
     		selectedVariable.push(id);
+
+         
+
     	}
     	if(selectedVariable.length == 3){
     	  //console.log("data/"+filename);
@@ -58,7 +64,7 @@
         }
         if(selectedVariable.length>3){
           selectedVariable = [];
-          $(".checkbox").attr("checked",false);
+          $(".box").attr("checked",false);
 
           //remove all the objects in the scene
           for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
@@ -70,9 +76,13 @@
          
           
         }
+     
 
+      console.log(selectedVariable);
+      $("#pointresult").html("<span style='color:red'>Variable X: &nbsp;" + selectedVariable[0] + "</span><br>"+"<span style='color:green'>Variable Y: &nbsp;" + selectedVariable[1] + "</span><br>"+"<span style='color:blue'>Variable Z: &nbsp;" + selectedVariable[2] + "</span><br>");
 
     }
+
     function createTextCanvas(text, color, font, size) {
         size = size || 13;
         var canvas = document.createElement('canvas');
@@ -136,7 +146,7 @@
 
    $( document ).ready(function(){
 	    $("#loadedcsvfile").draggable();
-  	    $("#loadedcsvfile").draggable('disable');
+  	  $("#loadedcsvfile").draggable('disable');
 	    $("#csvtitle").mouseover(function(){$("#loadedcsvfile").draggable("enable");});
 	    $("#csvtitle").mouseout(function(){$("#loadedcsvfile").draggable("disable");});
         renderViz("data/runs8-test.csv","x","y","z",true);
@@ -164,12 +174,12 @@
     
    // two cameras
     var camera_scatterplot = new THREE.PerspectiveCamera(90, window.innerWidth/ window.innerHeight, 0.001, 1000);
-    camera_scatterplot.position.set(0,15,0);
+     camera_scatterplot.position.set(0,15,0);
     //camera_scatterplot.position.z = 200;
 
    scene_scatterplot.add(camera_scatterplot);
 
-   
+  
    var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
         camcontrols.noPan = true;
         camcontrols.noZoom = true;
@@ -177,7 +187,7 @@
    var light = new THREE.PointLight(0xffffff, 1, 1000);
    light.position.set(0,25,0);
    scene_scatterplot.add(light);
-        
+
 
     function resize() {
         var width = window.innerWidth;
@@ -306,6 +316,7 @@
     scatterPlot.add(linebox);
 
 
+
     var texture1 = new THREE.TextureLoader().load("texture/disc.png");
     texture1.minFilter = THREE.LinearFilter;
     var texture2 = new THREE.TextureLoader().load("texture/ball.png")
@@ -339,7 +350,7 @@
         var y = yScale(dataPoints[i].y);
         var z = zScale(dataPoints[i].z);
        
-        var colorhex = '#EE2222'; //prototypeV[bmus-1]['prototype15'].Color;
+        var colorhex = '#EEEEEE'; //prototypeV[bmus-1]['prototype15'].Color;
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
        
         // //Color based on class #
@@ -366,108 +377,9 @@
       
         scene_scatterplot.add(scatterPlot);
         scatterPlot.rotation.x = (-1)*Math.PI/2;
+        // scatterPlot.rotation.z = (-1)*Math.PI/4;
  
- // ADD LEAP MOTION
 
-  //rays
-  var rayCasterManager = new RayCasterManager();
-
-  var rayMaterial = new  THREE.LineBasicMaterial({
-
-    color:0x00ff00,
-  })
-
-  var rayDistance = 99;
-  
-  // Connect to localhost and start getting frames
-  Leap.loop({enableGestures:true}, function(frame){
-    //console.log(frame);
-    var isHit = false;
-    var isPointing = false;            
-   $("#pointresult").css("background-color","black");
-    
-    rayCasterManager.removeAllRays(scene_scatterplot);
-    $("#pointresult").html("");
-    
-
-    scene_scatterplot.updateMatrixWorld();
-    // objectControls.update(frame);
-    // renderer_scatterplot.render(scene_scatterplot, camera_scatterplot)
-
-    for(var i = 0; i<frame.fingers.length; i++){
-      var finger = frame.fingers[i];
-      if((finger.type!==1 && finger.extended == true) || (finger.type==1 && finger.extended == false)){
-        isPointing = false;
-      }
-      else{
-        isPointing = true;
-      }
-
-    }
-
-    if(isPointing){
-      for (var i = 0; i < frame.hands.length; i++){
-
-        var hand = frame.hands[i];
-
-        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand.indexFinger, rayDistance, rayMaterial, scene_scatterplot);
-        
-
-       }
-      for ( var rayName in rayCasterManager.rays){
-          
-
-          var ray_caster = rayCasterManager.rays[rayName];
-          var intersect = ray_caster.intersectObject(points)[0];
-         
-
-          if (intersect){
-           // console.log(intersect);      
-            isHit = true ;
-
-          }
-
-          if(isHit == true && typeof intersect !== 'undefined'){
-            //console.log(irisd[intersect.index]);
-
-            var hitdata = irisd[intersect.index]
-            var color;
-            var classtxt;
-            //Color based on class #
-            if(intersect.index<50){
-              color = "red";
-              classtext = "Iris Setosa";
-            }
-            if(intersect.index>=50&&intersect.index<100){
-              color = "green";
-              classtext = "Iris Versicolour";
-            }
-            if(intersect.index>=100&&intersect.index<150){
-              color = "blue";
-              classtext = "Iris Virginica";
-            }
-            $("#pointresult").html(classtext+"<br>"+"x:&nbsp;"+hitdata.dataX+"&nbsp;y:&nbsp;"+hitdata.dataY+"&nbsp;z:&nbsp;"+hitdata.dataZ);
-            $("#pointresult").css("background-color",color);
-            
-          } 
-
-        }
-    }
-    
-  })
- .use('transform', {
-    // This matrix flips the x, y, and z axis, scales to meters, and offsets the hands by -8cm.
-    vr: true,
-    effectiveParent: camera_scatterplot
-
-  })
- .use('boneHand', {
-    targetEl: element,
-    arm: true,
-    scene: scene_scatterplot,
-    opacity: 0.8
-
-  });     
 
    //GUI-widget from Dat-gui
         // setup the control gui
@@ -652,9 +564,9 @@
 	         var params = {
 	         	loadFile: function(){
 	         		$("#fileinput").click();
-	         	  }
-	            };
-	         loaddata.add(params, 'loadFile').name('Load CSV');
+	         	   }
+	          };
+	         loadcsv = loaddata.add(params, 'loadFile').name('Load CSV');
          }
         
          var clock = new THREE.Clock();
@@ -728,10 +640,11 @@
     function animate() {
 
 
-        
+      
          updatePosition(controls.LearnSpeed, controls.Rotation, controls.AutoLoop, controls.LearnEpoch);
          window.requestAnimationFrame(animate);
-
+         var axes = new THREE.AxisHelper(2);
+         scene_scatterplot.add(axes);
          resize();
          camera_scatterplot.updateProjectionMatrix();
 
