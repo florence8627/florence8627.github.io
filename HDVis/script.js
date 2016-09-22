@@ -181,8 +181,8 @@
 
   
    var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
-        camcontrols.noPan = true;
-        camcontrols.noZoom = true;
+        camcontrols.noPan = false;
+        camcontrols.noZoom = false;
         element.addEventListener('click', fullscreen, false);
    var light = new THREE.PointLight(0xffffff, 1, 1000);
    light.position.set(0,25,0);
@@ -306,7 +306,7 @@
   
     );
     var lineMat = new THREE.LineBasicMaterial({
-        color: 0xEEEEEE,
+        color: 0xEEEE00,
         linewidth: 1,
         opacity:0.2,
         transparent:true
