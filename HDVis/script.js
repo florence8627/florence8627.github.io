@@ -350,7 +350,7 @@
         var y = yScale(dataPoints[i].y);
         var z = zScale(dataPoints[i].z);
        
-        var colorhex = '#EEEEEE'; //prototypeV[bmus-1]['prototype15'].Color;
+        var colorhex = '#EEEE00'; //prototypeV[bmus-1]['prototype15'].Color;
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
        
         // //Color based on class #
