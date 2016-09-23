@@ -594,7 +594,7 @@ function createGUI(){
         var rotationDegree = 0;
 
         if(rotation){
-            rotationDegree = 0.008;        
+            rotationDegree = 0.001;        
           }
          scatterPlot.rotation.z+=rotationDegree;
 
