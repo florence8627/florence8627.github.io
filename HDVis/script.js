@@ -622,7 +622,7 @@ function createGUI(){
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
               spritey.name = "label";
               spritey.position.set(positiondata.x,positiondata.y,positiondata.z+5);
-              scene_scatterplot.add( spritey );
+              //scene_scatterplot.add( spritey );
              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
              pointGeo.colorsNeedUpdate = true;
             
