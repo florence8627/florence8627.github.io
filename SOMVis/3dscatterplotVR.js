@@ -653,7 +653,7 @@
         var rotationDegree = 0;
         var diff = 0;
         if(rotation){
-            rotationDegree = 0.008;        
+            rotationDegree = 0.001;        
           }
         scatterPlot.rotation.y+=rotationDegree;
     
