@@ -1,8 +1,7 @@
 	var selectedVariable = ["","",""];
   var IsRotating = false;
 
-
-	function LoadFiles(files) {
+function LoadFiles(files) {
 		var file = files[0];
 
 		if (file.type.match("text/csv")||file.type.match("application/vnd.ms-excel")) {
@@ -44,7 +43,7 @@
 		 }
 
 	}
-    function PickVariable(id,filename){
+function PickVariable(id,filename){
 
       console.log(selectedVariable.length);
     	if(selectedVariable.length<=3){
@@ -67,27 +66,24 @@
                scene_scatterplot.remove(obj);
 
           }
-          
-         
+                   
           
         }
      
+     // console.log(selectedVariable);
+      $("#variable").html("<span style='color:red'>Variable X: &nbsp;" + selectedVariable[0] + "</span><br>"+"<span style='color:green'>Variable Y: &nbsp;" + selectedVariable[1] + "</span><br>"+"<span style='color:white'>Variable Z: &nbsp;" + selectedVariable[2] + "</span><br>");
 
-      console.log(selectedVariable);
-      $("#variable").html("<span style='color:red'>Variable X: &nbsp;" + selectedVariable[0] + "</span><br>"+"<span style='color:green'>Variable Y: &nbsp;" + selectedVariable[1] + "</span><br>"+"<span style='color:blue'>Variable Z: &nbsp;" + selectedVariable[2] + "</span><br>");
-
-    }
+}
 
 
-function makeTextSprite( message, parameters )
-{
+function makeTextSprite( message, parameters ){
   if ( parameters === undefined ) parameters = {};
   
   var fontface = parameters.hasOwnProperty("fontface") ? 
     parameters["fontface"] : "Arial";
   
   var fontsize = parameters.hasOwnProperty("fontsize") ? 
-    parameters["fontsize"] : 18;
+    parameters["fontsize"] : 10;
   
   var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
     parameters["borderThickness"] : 4;
@@ -131,13 +127,12 @@ function makeTextSprite( message, parameters )
   var spriteMaterial = new THREE.SpriteMaterial( 
     { map: texture, useScreenCoordinates: false } );
   var sprite = new THREE.Sprite( spriteMaterial );
-  sprite.scale.set(100,50,1.0);
+  //sprite.scale.set(100,50,1.0);
   return sprite;  
 }
 
 // function for drawing rounded rectangles
-function roundRect(ctx, x, y, w, h, r) 
-{
+function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x+r, y);
     ctx.lineTo(x+w-r, y);
@@ -150,22 +145,23 @@ function roundRect(ctx, x, y, w, h, r)
     ctx.quadraticCurveTo(x, y, x+r, y);
     ctx.closePath();
     ctx.fill();
-  ctx.stroke();   
+    ctx.stroke();   
 }
 
 
-    // from http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-    function hexToRgb(hex) { //TODO rewrite with vector output
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
+// from http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hexToRgb(hex) { 
+//TODO rewrite with vector output
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
             r: parseInt(result[1], 16),
             g: parseInt(result[2], 16),
             b: parseInt(result[3], 16)
-        } : null;
+      } : null;
     }
 
-     //Function to call when you mouseover a node
-    function mover(d) {
+//Function to call when you mouseover a node
+function mover(d) {
           var el = d3.select(this)
             .transition()
             .duration(10)     
@@ -173,8 +169,8 @@ function roundRect(ctx, x, y, w, h, r)
             ;
     }
 
-     //Mouseout function
-    function mout(d) { 
+//Mouseout function
+function mout(d) { 
           var el = d3.select(this)
              .transition()
              .duration(1000)
@@ -182,7 +178,7 @@ function roundRect(ctx, x, y, w, h, r)
              ;
     };
 
-   $( document ).ready(function(){
+$( document ).ready(function(){
 	    $("#loadedcsvfile").draggable();
   	  $("#loadedcsvfile").draggable('disable');
 	    $("#csvtitle").mouseover(function(){$("#loadedcsvfile").draggable("enable");});
@@ -209,12 +205,12 @@ function roundRect(ctx, x, y, w, h, r)
 
    // renderer_scatterplot.setClearColor(0x000000, 1.0);
    // one scene
-    var scene_scatterplot = new THREE.Scene();
+   var scene_scatterplot = new THREE.Scene();
     
    // two cameras
-    var camera_scatterplot = new THREE.PerspectiveCamera(90, window.innerWidth/ window.innerHeight, 0.001, 1000);
-     camera_scatterplot.position.set(0,15,0);
-    //camera_scatterplot.position.z = 200;
+   var camera_scatterplot = new THREE.PerspectiveCamera(90, window.innerWidth/ window.innerHeight, 0.001, 1000);
+       camera_scatterplot.position.set(0,15,0);
+   //camera_scatterplot.position.z = 200;
 
    scene_scatterplot.add(camera_scatterplot);
 
@@ -224,11 +220,12 @@ function roundRect(ctx, x, y, w, h, r)
         camcontrols.noZoom = false;
         element.addEventListener('click', fullscreen, false);
    var light = new THREE.PointLight(0xffffff, 1, 1000);
-   light.position.set(0,50,0);
-   scene_scatterplot.add(light);
+       light.position.set(0,50,0);
+       scene_scatterplot.add(light);
 
 
-    function resize() {
+function resize() {
+
         var width = window.innerWidth;
         var height = window.innerHeight;
 
@@ -243,7 +240,7 @@ function roundRect(ctx, x, y, w, h, r)
 
       }
 
-    function fullscreen() {
+function fullscreen() {
         
         if (container.requestFullscreen) {
           container.requestFullscreen();
@@ -261,7 +258,7 @@ function roundRect(ctx, x, y, w, h, r)
     
  
 
-    function v(x, y, z) {
+function v(x, y, z) {
         return new THREE.Vector3(x, y, z);
       }
 
@@ -287,7 +284,7 @@ function createGUI(){
                this.FocalLength = 15;
                this.WebVR = false;
 
-               this.EnableRotate = function () {
+            this.EnableRotate = function () {
                   IsRotating = !IsRotating;
           
              };
@@ -329,8 +326,7 @@ function createGUI(){
               else{
                
                delete effect
-               
-
+              
               
               }
 
@@ -363,8 +359,6 @@ function createGUI(){
 
          };
        
-
-      
 
            viscontrol.add(controls, 'Rotation').onChange(controls.EnableRotate);         
            stereocontrol.add(controls, 'Stereo').onChange(controls.EnableStereo);
@@ -544,7 +538,7 @@ function createGUI(){
   
     var current = new Date().getTime();
 
-    // ADD LEAP MOTION
+// ADD LEAP MOTION
 
   //rays
   var rayCasterManager = new RayCasterManager();
@@ -617,12 +611,14 @@ function createGUI(){
             //console.log(irisd[intersect.index]);
             var positiondata = pointGeo.vertices[intersect.index];
             var hitdata = dataPoints[intersect.index]
-            var text = selectedVariable[0]+":"+hitdata.x +","+selectedVariable[1]+":"+hitdata.y+","+selectedVariable[2]+":"+hitdata.z
-            $("#pointresult").html("x:&nbsp;"+hitdata.x+"&nbsp;y:&nbsp;"+hitdata.y+"&nbsp;z:&nbsp;"+hitdata.z);
-              var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+           // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
+            var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
+            $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
+              var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
-              spritey.position.set(positiondata.x,positiondata.y,positiondata.z+5);
-              //scene_scatterplot.add( spritey );
+              spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
+              spritey.scale.set(5,5,5);
+             scene_scatterplot.add( spritey );
              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
              pointGeo.colorsNeedUpdate = true;
             
@@ -647,7 +643,7 @@ function createGUI(){
   });
 
 
-    function updatePosition(rotation){
+  function updatePosition(rotation){
 
      
         var rotationDegree = 0;
@@ -669,10 +665,9 @@ function createGUI(){
         
     };
    
-    function animate() {
+  function animate() {
 
-
-      
+     
          updatePosition(IsRotating);
          resize();
          camera_scatterplot.updateProjectionMatrix();
