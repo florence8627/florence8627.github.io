@@ -207,7 +207,7 @@ $( document ).ready(function(){
    // one scene
    var scene_scatterplot = new THREE.Scene();
     
-   // two cameras
+   
    var camera_scatterplot = new THREE.PerspectiveCamera(90, window.innerWidth/ window.innerHeight, 0.001, 1000);
        camera_scatterplot.position.set(0,15,0);
    //camera_scatterplot.position.z = 200;
@@ -216,13 +216,33 @@ $( document ).ready(function(){
 
   
    var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
-        camcontrols.noPan = false;
-        camcontrols.noZoom = false;
+       camcontrols.noPan = false;
+       camcontrols.noZoom = false;
         element.addEventListener('click', fullscreen, false);
    var light = new THREE.PointLight(0xffffff, 1, 1000);
        light.position.set(0,50,0);
        scene_scatterplot.add(light);
 
+//leap camera control - trial
+   var  cameraControls = new THREE.LeapCameraControls(camera_scatterplot);
+
+        cameraControls.rotateEnabled  = false;
+        cameraControls.rotateSpeed    = 3;
+        cameraControls.rotateHands    = 1;
+        cameraControls.rotateFingers  = [2, 3];
+        
+        cameraControls.zoomEnabled    = true;
+        cameraControls.zoomSpeed      = 6;
+        cameraControls.zoomHands      = 1;
+        cameraControls.zoomFingers    = [4, 5];
+        cameraControls.zoomMin        = 50;
+        cameraControls.zoomMax        = 2000;
+        
+        cameraControls.panEnabled     = true;
+        cameraControls.panSpeed       = 2;
+        cameraControls.panHands       = 2;
+        cameraControls.panFingers     = [6, 12];
+        cameraControls.panRightHanded = false; // for left-handed person
 
 function resize() {
 
@@ -261,8 +281,7 @@ function fullscreen() {
 function v(x, y, z) {
         return new THREE.Vector3(x, y, z);
       }
-
-    
+   
 
 function createGUI(){
 
@@ -553,6 +572,9 @@ function createGUI(){
   // Connect to localhost and start getting frames
   Leap.loop({enableGestures:true}, function(frame){
     //console.log(frame);
+    cameraControls.update(frame);
+    renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+   
     var isHit = false;
     var isPointing = false;            
     $("#pointresult").css("background-color","black");
@@ -571,8 +593,7 @@ function createGUI(){
 
      }
     scene_scatterplot.updateMatrixWorld();
-    // objectControls.update(frame);
-    // renderer_scatterplot.render(scene_scatterplot, camera_scatterplot)
+    
 
     for(var i = 0; i<frame.fingers.length; i++){
       var finger = frame.fingers[i];
@@ -630,7 +651,7 @@ function createGUI(){
   })
  .use('transform', {
     // This matrix flips the x, y, and z axis, scales to meters, and offsets the hands by -8cm.
-    vr: true,
+    //vr: true,
     effectiveParent: camera_scatterplot
 
   })
