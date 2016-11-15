@@ -651,7 +651,7 @@ function createGUI(){
   })
  .use('transform', {
     // This matrix flips the x, y, and z axis, scales to meters, and offsets the hands by -8cm.
-    //vr: true,
+    vr: true,
     effectiveParent: camera_scatterplot
 
   })
