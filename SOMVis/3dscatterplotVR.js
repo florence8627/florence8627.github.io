@@ -32,6 +32,78 @@
         return mesh;
     }
 
+    function makeTextSprite( message, parameters ){
+      if ( parameters === undefined ) parameters = {};
+      
+      var fontface = parameters.hasOwnProperty("fontface") ? 
+        parameters["fontface"] : "Arial";
+      
+      var fontsize = parameters.hasOwnProperty("fontsize") ? 
+        parameters["fontsize"] : 10;
+      
+      var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
+        parameters["borderThickness"] : 4;
+      
+      var borderColor = parameters.hasOwnProperty("borderColor") ?
+        parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+      
+      var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
+        parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
+
+      //var spriteAlignment = THREE.SpriteAlignment.topLeft;
+        
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+      context.font = "Bold " + fontsize + "px " + fontface;
+        
+      // get size data (height depends only on font size)
+      var metrics = context.measureText( message );
+      var textWidth = metrics.width;
+      
+      // background color
+      context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
+                      + backgroundColor.b + "," + backgroundColor.a + ")";
+      // border color
+      context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
+                      + borderColor.b + "," + borderColor.a + ")";
+
+      context.lineWidth = borderThickness;
+      roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+      // 1.4 is extra height factor for text below baseline: g,j,p,q.
+      
+      // text color
+      context.fillStyle = "rgba(0, 0, 0, 1.0)";
+
+      context.fillText( message, borderThickness, fontsize + borderThickness);
+      
+      // canvas contents will be used for a texture
+      var texture = new THREE.Texture(canvas) 
+      texture.needsUpdate = true;
+
+      var spriteMaterial = new THREE.SpriteMaterial( 
+        { map: texture, useScreenCoordinates: false } );
+      var sprite = new THREE.Sprite( spriteMaterial );
+      //sprite.scale.set(100,50,1.0);
+      return sprite;  
+    }
+
+    // function for drawing rounded rectangles
+    function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x+r, y);
+        ctx.lineTo(x+w-r, y);
+        ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+        ctx.lineTo(x+w, y+h-r);
+        ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+        ctx.lineTo(x+r, y+h);
+        ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+        ctx.lineTo(x, y+r);
+        ctx.quadraticCurveTo(x, y, x+r, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();   
+    }
+
     // from http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
     function hexToRgb(hex) { //TODO rewrite with vector output
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -372,8 +444,33 @@
     
     rayCasterManager.removeAllRays(scene_scatterplot);
     $("#pointresult").html("");
-    
 
+
+    for (var i = 0; i<pointGeo.colors.length; i++){
+     // pointGeo.colors[i] = new THREE.Color().setRGB(1,1,0);
+      var bmus = dataPoints[i].bmus;
+      var colorhex = prototypeV[bmus-1]['prototype15'].Color;
+      var pointcolor = hexToRgb(colorhex);
+      pointGeo.vertices.push(new THREE.Vector3(x, y, z));
+      pointGeo.colors[i] = new THREE.Color().setRGB(pointcolor.r/255, pointcolor.g/255, pointcolor.b/255);
+      // //Color based on class #
+      // if(i<50){
+      // pointGeo.colors[i] = new THREE.Color().setRGB(1,0,0);
+      // }
+      // if(i>=50&&i<100){
+      // pointGeo.colors[i] = new THREE.Color().setRGB(0,1,0);
+      // }
+      // if(i>=100&&i<150){
+      // pointGeo.colors[i] = new THREE.Color().setRGB(0,0,1);
+      //  }
+     }
+
+    for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
+        obj = scene_scatterplot.children[i];
+        if (obj.name == "label")
+           scene_scatterplot.remove(obj);
+
+     }
     scene_scatterplot.updateMatrixWorld();
     // objectControls.update(frame);
     // renderer_scatterplot.render(scene_scatterplot, camera_scatterplot)
@@ -413,25 +510,41 @@
 
           if(isHit == true && typeof intersect !== 'undefined'){
             //console.log(irisd[intersect.index]);
-
+            var positiondata = pointGeo.vertices[intersect.index];
             var hitdata = irisd[intersect.index]
             var color;
             var classtxt;
+            var spritey;
+            var text;
             //Color based on class #
             if(intersect.index<50){
               color = "red";
               classtext = "Iris Setosa";
+              text = classtext+" X: "+hitdata.dataX+", Y: "+hitdata.dataY+", Z: "+hitdata.dataZ;
+              spritey = makeTextSprite( text, { fontsize: 10, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255,g:0,b:0,a:1.0} } );
             }
             if(intersect.index>=50&&intersect.index<100){
               color = "green";
               classtext = "Iris Versicolour";
+              text = classtext+" X: "+hitdata.dataX +", Y: "+hitdata.dataY+", Z: "+hitdata.dataZ
+              spritey = makeTextSprite( text, { fontsize: 10, borderColor: {r:0, g:255, b:0, a:1.0}, backgroundColor: {r:0, g:255, b:0, a:1.0} } );
             }
             if(intersect.index>=100&&intersect.index<150){
               color = "blue";
               classtext = "Iris Virginica";
+              text = classtext+" X: "+hitdata.dataX +", Y: "+hitdata.dataY+", Z: "+hitdata.dataZ
+              spritey = makeTextSprite( text, { fontsize: 10, borderColor: {r:0, g:0, b:255, a:1.0}, backgroundColor: {r:0, g:0, b:255, a:1.0} } );
             }
             $("#pointresult").html(classtext+"<br>"+"x:&nbsp;"+hitdata.dataX+"&nbsp;y:&nbsp;"+hitdata.dataY+"&nbsp;z:&nbsp;"+hitdata.dataZ);
             $("#pointresult").css("background-color",color);
+           
+           
+             spritey.name = "label";
+             spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
+             spritey.scale.set(5,5,5);
+             scene_scatterplot.add( spritey );
+             pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,1,0);
+             pointGeo.colorsNeedUpdate = true;
             
           } 
 
