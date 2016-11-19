@@ -334,7 +334,7 @@
 
     });
    var material2 = new THREE.PointsMaterial({
-        size:0.25,
+        size:0.35,
         map:texture2,
         vertexColors: THREE.VertexColors, 
         alphaTest: 0.5,
@@ -543,7 +543,7 @@
              spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
              spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
-             pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,1,0);
+             pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,1,1);
              pointGeo.colorsNeedUpdate = true;
             
           } 
