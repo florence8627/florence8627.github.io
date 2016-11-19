@@ -543,7 +543,7 @@
              spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
              spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
-             pointGeo.colors[intersect.index] = new THREE.Color().setRGB(0.5,0.5,0.5);
+             pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
              pointGeo.colorsNeedUpdate = true;
             
           } 
