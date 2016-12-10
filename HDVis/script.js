@@ -568,11 +568,24 @@ function createGUI(){
   })
 
   var rayDistance = 99;
+  var isPointing = false;
+  var isHit = false;
   
   // Connect to localhost and start getting frames
-  Leap.loop({enableGestures:true}, function(frame){
+  var controller = Leap.loop({enableGestures:true}, function(frame){
     //console.log(frame);
-    cameraControls.update(frame);
+    if( frame.hands.length>1){
+            
+              scatterPlot.rotation.z = (frame.hands[0].yaw() + frame.hands[1].yaw())/2;
+            
+             if(frame.hands[0].palmNormal.y>0 && frame.hands[1].palmNormal.y>0){
+              scatterPlot.position.y +=0.01;
+              }
+             if(frame.hands[0].palmNormal.y<0 && frame.hands[1].palmNormal.y<0){
+              scatterPlot.position.y -=0.01;
+              }
+            }
+    
     renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
    
     var isHit = false;
