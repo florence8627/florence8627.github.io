@@ -607,7 +607,7 @@ function createGUI(){
 
     for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
         obj = scene_scatterplot.children[i];
-        if (obj.name == "label")
+        if (obj.name == "label"||obj.name=="rayline")
            scene_scatterplot.remove(obj);
 
      }
@@ -650,9 +650,10 @@ function createGUI(){
   }
 
     if(isPointing){
+      var hand;
       for (var i = 0; i < frame.hands.length; i++){
 
-        var hand = frame.hands[i];
+        hand = frame.hands[i];
 
         rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand.indexFinger, rayDistance, rayMaterial, scene_scatterplot);
         
@@ -662,7 +663,7 @@ function createGUI(){
           
 
           var ray_caster = rayCasterManager.rays[rayName];
-          var intersect = ray_caster.intersectObject(points)[1];
+          var intersect = ray_caster.intersectObject(points)[0];
          
 
           if (intersect){
@@ -673,17 +674,27 @@ function createGUI(){
 
           if(isHit == true && typeof intersect !== 'undefined'){
             //console.log(irisd[intersect.index]);
+
             var positiondata = pointGeo.vertices[intersect.index];
             var hitdata = dataPoints[intersect.index]
-           // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
+
+            // var geometry = new THREE.Geometry();
+            // var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
+            // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
+            // geometry.vertices.push(tip_pos,data_pos);
+            // var rayline = new THREE.Line(geometry,rayMaterial);
+            // rayline.name = "rayline";
+            // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
             var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
               //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
-              spritey.position.set((-1)*positiondata.x,10,(-1)*positiondata.z);
+              spritey.position.set((-0.5)*positiondata.x,10,(-0.5)*positiondata.z);
+             
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
+             // scene_scatterplot.add(rayline);
              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
              pointGeo.colorsNeedUpdate = true;
             
