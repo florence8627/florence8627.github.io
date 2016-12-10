@@ -45,7 +45,7 @@ function LoadFiles(files) {
 	}
 function PickVariable(id,filename){
 
-      console.log(selectedVariable.length);
+     // console.log(selectedVariable.length);
     	if(selectedVariable.length<=3){
     		selectedVariable.push(id);         
 
@@ -504,7 +504,7 @@ function createGUI(){
         map:texture2,
         vertexColors: THREE.VertexColors, 
         alphaTest: 0.5,
-        opacity:0.6,
+        opacity:0.7,
         transparent: true
     
 
@@ -564,10 +564,12 @@ function createGUI(){
 
   var rayMaterial = new  THREE.LineBasicMaterial({
 
-    color:0x00ff00,
-  })
+    color:0xff0000,
+    transparent: true,
+    opacity:0.5
+  });
 
-  var rayDistance = 99;
+  var rayDistance = 1000;
   var isPointing = false;
   var isHit = false;
   
@@ -575,21 +577,25 @@ function createGUI(){
   var controller = Leap.loop({enableGestures:true}, function(frame){
     //console.log(frame);
     if( frame.hands.length>1){
-            
-              scatterPlot.rotation.z = (frame.hands[0].yaw() + frame.hands[1].yaw())/2;
-            
-             if(frame.hands[0].palmNormal.y>0 && frame.hands[1].palmNormal.y>0){
-              scatterPlot.position.y +=0.01;
+
+            // console.log(frame.hands[0].palmVelocity);
+            // console.log(frame.hands[1].palmVelocity);
+
+            if(Math.abs(frame.hands[0].palmVelocity[2])>70||Math.abs(frame.hands[1].palmVelocity[2])>70){
+              scatterPlot.rotation.z += (frame.hands[0].roll()+frame.hands[1].roll())/2;
               }
-             if(frame.hands[0].palmNormal.y<0 && frame.hands[1].palmNormal.y<0){
-              scatterPlot.position.y -=0.01;
+            
+             if(frame.hands[0].palmVelocity[1]>100 && frame.hands[1].palmVelocity[1]>100){
+              scatterPlot.position.y +=0.5;
+              }
+             if(frame.hands[0].palmVelocity[1]<-100 && frame.hands[1].palmVelocity[1]<-100){
+              scatterPlot.position.y -=0.5;
               }
             }
-    
+
     renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
    
-    var isHit = false;
-    var isPointing = false;            
+              
     $("#pointresult").css("background-color","black");
     
     rayCasterManager.removeAllRays(scene_scatterplot);
@@ -608,16 +614,40 @@ function createGUI(){
     scene_scatterplot.updateMatrixWorld();
     
 
-    for(var i = 0; i<frame.fingers.length; i++){
-      var finger = frame.fingers[i];
-      if((finger.type!==1 && finger.extended == true) || (finger.type==1 && finger.extended == false)){
-        isPointing = false;
-      }
-      else{
-        isPointing = true;
-      }
+    // for(var i = 0; i<frame.fingers.length; i++){
+    //   var finger = frame.fingers[i];
+    //   if((finger.type!==1 && finger.extended == true) || (finger.type==1 && finger.extended == false)){
+    //     isPointing = false;
+    //   }
+    //   else{
+    //     isPointing = true;
+    //   }
 
-    }
+    // }
+
+    if(frame.valid && frame.gestures.length > 0){
+    frame.gestures.forEach(function(gesture){
+        switch (gesture.type){
+          case "circle":
+              console.log("Circle Gesture");
+              isPointing = true;
+              break;
+          case "keyTap":
+              console.log("Key Tap Gesture");
+              isPointing = false;
+              break;
+
+          case "screenTap":
+              console.log("Screen Tap Gesture");
+              isPointing = false;
+              break;
+          case "swipe":
+              console.log("Swipe Gesture");
+              isPointing = false;
+              break;
+        }
+    });
+  }
 
     if(isPointing){
       for (var i = 0; i < frame.hands.length; i++){
@@ -632,7 +662,7 @@ function createGUI(){
           
 
           var ray_caster = rayCasterManager.rays[rayName];
-          var intersect = ray_caster.intersectObject(points)[0];
+          var intersect = ray_caster.intersectObject(points)[1];
          
 
           if (intersect){
@@ -650,7 +680,8 @@ function createGUI(){
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
-              spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
+              //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
+              spritey.position.set((-1)*positiondata.x,10,(-1)*positiondata.z);
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
@@ -672,7 +703,7 @@ function createGUI(){
     targetEl: element,
     arm: true,
     scene: scene_scatterplot,
-    opacity: 0.8
+    opacity: 0.5
 
   });
 
