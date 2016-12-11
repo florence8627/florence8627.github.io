@@ -578,19 +578,19 @@ function createGUI(){
   // Connect to localhost and start getting frames
   var controller = Leap.loop({enableGestures:true}, function(frame){
     //console.log(frame);
-    if( frame.hands.length>1){
+    if( frame.hands.length>1&&frame.hands[0].middleFinger.extended&&frame.hands[0].indexFinger.extended){
 
             // console.log(frame.hands[0].palmVelocity);
             // console.log(frame.hands[1].palmVelocity);
 
-            if(Math.abs(frame.hands[0].palmVelocity[2])>70||Math.abs(frame.hands[1].palmVelocity[2])>70){
-              scatterPlot.rotation.z += (frame.hands[0].roll()+frame.hands[1].roll())/10;
+            if(Math.abs(frame.hands[0].palmVelocity[2])>100||Math.abs(frame.hands[1].palmVelocity[2])>100){
+              scatterPlot.rotation.z += (frame.hands[0].roll()+frame.hands[1].roll())/15;
               }
             
-             if(frame.hands[0].palmVelocity[1]>100 && frame.hands[1].palmVelocity[1]>100){
+             if(frame.hands[0].palmVelocity[1]>200 && frame.hands[1].palmVelocity[1]>200){
               scatterPlot.position.y +=0.5;
               }
-             if(frame.hands[0].palmVelocity[1]<-100 && frame.hands[1].palmVelocity[1]<-100){
+             if(frame.hands[0].palmVelocity[1]<-200 && frame.hands[1].palmVelocity[1]<-200){
               scatterPlot.position.y -=0.5;
               }
             }
@@ -691,7 +691,7 @@ function createGUI(){
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
               //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
-              spritey.position.set(0,10,0);
+              spritey.position.set((-0.2)*positiondata.x,10,(-0.2)*positiondata.z);
              
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
