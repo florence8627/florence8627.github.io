@@ -97,8 +97,7 @@ function makeTextSprite( message, parameters ){
   //var spriteAlignment = THREE.SpriteAlignment.topLeft;
     
   var canvas = document.createElement('canvas');
-  canvas.width = 1800;
-  canvas.height = 900;
+
 
   var context = canvas.getContext('2d');
   context.font = "Bold " + fontsize + "px " + fontface;
@@ -693,7 +692,7 @@ function createGUI(){
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
               //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
-              spritey.position.set((-0.2)*positiondata.x,10,-0.5);
+              spritey.position.set((-0.05)*positiondata.x,10,(-0.05)*positiondata.z);
              
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
