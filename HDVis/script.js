@@ -681,7 +681,7 @@ function createGUI(){
             var hitdata = dataPoints[intersect.index]
 
             // var geometry = new THREE.Geometry();
-            // var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
+             var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
             // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
             // geometry.vertices.push(tip_pos,data_pos);
             // var rayline = new THREE.Line(geometry,rayMaterial);
@@ -692,7 +692,9 @@ function createGUI(){
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
               //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
-              spritey.position.set((-0.05)*positiondata.x,10,(-0.05)*positiondata.z);
+             
+             // spritey.position.set((-0.05)*positiondata.x,10,(-0.05)*positiondata.z);
+             spritey.position.set(tip_pos.x,tip_pos.y,tip_pos.z);
              
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
