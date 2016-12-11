@@ -572,7 +572,7 @@ function createGUI(){
     opacity:0.5
   });
 
-  var rayDistance = 99;
+  var rayDistance = 1000;
   var isPointing = false;
   var isHit = false;
   
@@ -691,9 +691,9 @@ function createGUI(){
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
               var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
               spritey.name = "label";
-              //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
+              spritey.position.set((-0.2)*positiondata.x,10,(-0.1)*positiondata.z);
              
-              spritey.position.set(0,10,0);
+             
              //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
               spritey.scale.set(5,5,5);
