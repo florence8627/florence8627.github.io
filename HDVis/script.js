@@ -97,6 +97,8 @@ function makeTextSprite( message, parameters ){
   //var spriteAlignment = THREE.SpriteAlignment.topLeft;
     
   var canvas = document.createElement('canvas');
+  canvas.width = 1800;
+  canvas.height = 900;
 
   var context = canvas.getContext('2d');
   context.font = "Bold " + fontsize + "px " + fontface;
