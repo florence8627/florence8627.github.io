@@ -97,6 +97,7 @@ function makeTextSprite( message, parameters ){
   //var spriteAlignment = THREE.SpriteAlignment.topLeft;
     
   var canvas = document.createElement('canvas');
+
   var context = canvas.getContext('2d');
   context.font = "Bold " + fontsize + "px " + fontface;
     
@@ -123,9 +124,10 @@ function makeTextSprite( message, parameters ){
   // canvas contents will be used for a texture
   var texture = new THREE.Texture(canvas) 
   texture.needsUpdate = true;
+  texture.minFilter = THREE.LinearFilter;
 
   var spriteMaterial = new THREE.SpriteMaterial( 
-    { map: texture, useScreenCoordinates: false } );
+    { map: texture} );
   var sprite = new THREE.Sprite( spriteMaterial );
   //sprite.scale.set(100,50,1.0);
   return sprite;  
@@ -539,7 +541,7 @@ function createGUI(){
 
         var points = new THREE.Points(pointGeo, material2);
      
-      
+        points.name = "points"
         scatterPlot.add(points);
         var axes = new THREE.AxisHelper(2);
         scatterPlot.add(axes);
@@ -673,8 +675,7 @@ function createGUI(){
           }
 
           if(isHit == true && typeof intersect !== 'undefined'){
-            //console.log(irisd[intersect.index]);
-
+           
             var positiondata = pointGeo.vertices[intersect.index];
             var hitdata = dataPoints[intersect.index]
 
@@ -694,7 +695,7 @@ function createGUI(){
              
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
-             // scene_scatterplot.add(rayline);
+             //scene_scatterplot.add(rayline);
              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
              pointGeo.colorsNeedUpdate = true;
             
