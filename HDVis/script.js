@@ -572,7 +572,7 @@ function createGUI(){
     opacity:0.5
   });
 
-  var rayDistance = 10;
+  var rayDistance = 99;
   var isPointing = false;
   var isHit = false;
   
@@ -693,8 +693,8 @@ function createGUI(){
               spritey.name = "label";
               //spritey.position.set(positiondata.x,positiondata.y,positiondata.z);
              
-             // spritey.position.set((-0.05)*positiondata.x,10,(-0.05)*positiondata.z);
-             spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
+              spritey.position.set(0,10,0);
+             //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
               spritey.scale.set(5,5,5);
              scene_scatterplot.add( spritey );
