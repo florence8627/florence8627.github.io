@@ -671,12 +671,12 @@ function createGUI(){
             var positiondata = pointGeo.vertices[intersect.index];
             var hitdata = dataPoints[intersect.index]
 
-            var geometry = new THREE.Geometry();
-            var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
-            var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
-            geometry.vertices.push(tip_pos,data_pos);
-            var rayline = new THREE.Line(geometry,rayMaterial);
-            rayline.name = "rayline";
+            // var geometry = new THREE.Geometry();
+            // var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
+            // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
+            // geometry.vertices.push(tip_pos,data_pos);
+            // var rayline = new THREE.Line(geometry,rayMaterial);
+            // rayline.name = "rayline";
             // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
             var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
@@ -685,7 +685,7 @@ function createGUI(){
              // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
              
-              spritey.position.set((-0.5)*positiondata.x, positiondata.y,(-0.5)*positiondata.z);
+              spritey.position.set((-0.5)*positiondata.x, 10,(-0.5)*positiondata.z);
              
               spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
