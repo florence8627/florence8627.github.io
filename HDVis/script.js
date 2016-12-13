@@ -577,7 +577,7 @@ function createGUI(){
   // Connect to localhost and start getting frames
   var controller = Leap.loop({enableGestures:true}, function(frame){
     //console.log(frame);
-    if( frame.hands.length>1&&frame.hands[0].middleFinger.extended&&frame.hands[0].indexFinger.extended){
+    if( frame.hands.length>1&&CheckAllFingerExtended(frame)){
 
             // console.log(frame.hands[0].palmVelocity);
             // console.log(frame.hands[1].palmVelocity);
@@ -671,25 +671,25 @@ function createGUI(){
             var positiondata = pointGeo.vertices[intersect.index];
             var hitdata = dataPoints[intersect.index]
 
-            // var geometry = new THREE.Geometry();
+            var geometry = new THREE.Geometry();
             var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
-            // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
-            // geometry.vertices.push(tip_pos,data_pos);
-            // var rayline = new THREE.Line(geometry,rayMaterial);
-            // rayline.name = "rayline";
+            var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
+            geometry.vertices.push(tip_pos,data_pos);
+            var rayline = new THREE.Line(geometry,rayMaterial);
+            rayline.name = "rayline";
             // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
             var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
               var spritey = makeTextSprite( text, { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
               spritey.name = "label";
-              spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
+             // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
              
-              //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
+              spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
-              spritey.scale.set(1,1,1);
+              spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
-              //scene_scatterplot.add(rayline);
+              scene_scatterplot.add(rayline);
               pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
               pointGeo.colorsNeedUpdate = true;
             
