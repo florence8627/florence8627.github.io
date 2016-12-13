@@ -753,11 +753,7 @@
          vrcontrol.add(controls, 'WebVR').onChange(controls.EnableVR);
 
 
-
-
-
-
-      
+   
   
     var current = new Date().getTime();
 

@@ -237,31 +237,11 @@ $( document ).ready(function(){
    var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
        camcontrols.noPan = false;
        camcontrols.noZoom = false;
-        element.addEventListener('click', fullscreen, false);
+       element.addEventListener('click', fullscreen, false);
    var light = new THREE.PointLight(0xffffff, 1, 1000);
        light.position.set(0,50,0);
        scene_scatterplot.add(light);
 
-//leap camera control - trial
-   var  cameraControls = new THREE.LeapCameraControls(camera_scatterplot);
-
-        cameraControls.rotateEnabled  = false;
-        cameraControls.rotateSpeed    = 3;
-        cameraControls.rotateHands    = 1;
-        cameraControls.rotateFingers  = [2, 3];
-        
-        cameraControls.zoomEnabled    = true;
-        cameraControls.zoomSpeed      = 6;
-        cameraControls.zoomHands      = 1;
-        cameraControls.zoomFingers    = [4, 5];
-        cameraControls.zoomMin        = 50;
-        cameraControls.zoomMax        = 2000;
-        
-        cameraControls.panEnabled     = true;
-        cameraControls.panSpeed       = 2;
-        cameraControls.panHands       = 2;
-        cameraControls.panFingers     = [6, 12];
-        cameraControls.panRightHanded = false; // for left-handed person
 
 function resize() {
 
@@ -324,7 +304,9 @@ function createGUI(){
 
             this.EnableRotate = function () {
                   IsRotating = !IsRotating;
-          
+
+      
+            
              };
 
             
@@ -495,7 +477,7 @@ function createGUI(){
     var lineMat = new THREE.LineBasicMaterial({
         color: 0xEEEEEE,
         linewidth: 1,
-        opacity:0.2,
+        opacity:0.5,
         transparent:true
     });
     var linebox = new THREE.Line(lineBoxGeo, lineMat);
@@ -705,7 +687,7 @@ function createGUI(){
              
               //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
-              spritey.scale.set(5,5,5);
+              spritey.scale.set(1,1,1);
               scene_scatterplot.add( spritey );
               //scene_scatterplot.add(rayline);
               pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
@@ -727,7 +709,7 @@ function createGUI(){
     targetEl: element,
     arm: true,
     scene: scene_scatterplot,
-    opacity: 0.5
+    opacity: 0.8
 
   });
 
