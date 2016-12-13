@@ -102,7 +102,7 @@ function makeTextSprite( message, parameters ){
     parameters["fontsize"] : 10;
   
   var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
-    parameters["borderThickness"] : 4;
+    parameters["borderThickness"] : 2;
   
   var borderColor = parameters.hasOwnProperty("borderColor") ?
     parameters["borderColor"] : { r:255, g:0, b:0, a:1.0 };
@@ -682,7 +682,7 @@ function createGUI(){
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
               var spritey = makeTextSprite( text, { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
               spritey.name = "label";
-              spritey.position.set((-0.5)*positiondata.x,10,(-0.5)*positiondata.z);
+              spritey.position.set((-0.5)*positiondata.x,(-0.5)*positiondata.y,(-0.5)*positiondata.z);
              
              
               //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
