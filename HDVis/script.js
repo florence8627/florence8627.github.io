@@ -105,10 +105,10 @@ function makeTextSprite( message, parameters ){
     parameters["borderThickness"] : 4;
   
   var borderColor = parameters.hasOwnProperty("borderColor") ?
-    parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+    parameters["borderColor"] : { r:255, g:0, b:0, a:1.0 };
   
   var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
-    parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
+    parameters["backgroundColor"] : { r:0, g:0, b:0, a:1.0 };
 
   //var spriteAlignment = THREE.SpriteAlignment.topLeft;
     
@@ -134,7 +134,7 @@ function makeTextSprite( message, parameters ){
   // 1.4 is extra height factor for text below baseline: g,j,p,q.
   
   // text color
-  context.fillStyle = "rgba(0, 0, 0, 1.0)";
+  context.fillStyle = "rgba(255, 255, 255, 1.0)";
 
   context.fillText( message, borderThickness, fontsize + borderThickness);
   
@@ -146,7 +146,7 @@ function makeTextSprite( message, parameters ){
   var spriteMaterial = new THREE.SpriteMaterial( 
     { map: texture} );
   var sprite = new THREE.Sprite( spriteMaterial );
-  //sprite.scale.set(100,50,1.0);
+  
   return sprite;  
 }
 
@@ -680,14 +680,14 @@ function createGUI(){
             // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
             var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
-              var spritey = makeTextSprite( text, { fontsize: 12, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:1.0} } );
+              var spritey = makeTextSprite( text, { fontsize: 15, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
               spritey.name = "label";
-              spritey.position.set((-0.2)*positiondata.x,10,(-0.1)*positiondata.z);
+              spritey.position.set((-0.5)*positiondata.x,10,(-0.5)*positiondata.z);
              
              
               //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
-              spritey.scale.set(1,1,1);
+              spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
               //scene_scatterplot.add(rayline);
               pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
