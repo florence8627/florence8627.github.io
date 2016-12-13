@@ -675,7 +675,7 @@ function createGUI(){
              // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
              
-              spritey.position.set((-0.5)*positiondata.x, 10,(-0.5)*positiondata.z);
+              spritey.position.set(0, 10,(-0.5)*positiondata.z);
              
               spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
