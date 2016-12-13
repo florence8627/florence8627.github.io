@@ -689,7 +689,7 @@ function createGUI(){
              
               spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
-              scene_scatterplot.add(rayline);
+              //scene_scatterplot.add(rayline);
               pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
               pointGeo.colorsNeedUpdate = true;
             
