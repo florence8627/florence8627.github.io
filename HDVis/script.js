@@ -491,7 +491,7 @@ function createGUI(){
     texture2.minFilter = THREE.LinearFilter;
    
    var material2 = new THREE.PointsMaterial({
-        size:0.1,
+        size:0.15,
         map:texture2,
         vertexColors: THREE.VertexColors, 
         alphaTest: 0.5,
@@ -699,7 +699,7 @@ function createGUI(){
     targetEl: element,
     arm: true,
     scene: scene_scatterplot,
-    opacity: 1
+    opacity: 0.8
 
   });
 
