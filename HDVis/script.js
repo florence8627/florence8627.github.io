@@ -486,27 +486,17 @@ function createGUI(){
 
 
 
-    var texture1 = new THREE.TextureLoader().load("texture/disc.png");
-    texture1.minFilter = THREE.LinearFilter;
+    
     var texture2 = new THREE.TextureLoader().load("texture/ball.png")
     texture2.minFilter = THREE.LinearFilter;
-    var material1 = new THREE.PointsMaterial({
-        size:0.45,
+   
+   var material2 = new THREE.PointsMaterial({
+        size:0.2,
         map:texture2,
         vertexColors: THREE.VertexColors, 
         alphaTest: 0.5,
         opacity:1,
-        transparent: true
-    
-
-    });
-   var material2 = new THREE.PointsMaterial({
-        size:0.25,
-        map:texture2,
-        vertexColors: THREE.VertexColors, 
-        alphaTest: 0.5,
-        opacity:0.7,
-        transparent: true
+        transparent: false
     
 
     });
