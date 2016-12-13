@@ -682,12 +682,12 @@ function createGUI(){
             $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
               var spritey = makeTextSprite( text, { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
               spritey.name = "label";
-              spritey.position.set((-0.5)*positiondata.x,(-0.5)*positiondata.y,(-0.5)*positiondata.z);
+              spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
              
               //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
-              spritey.scale.set(2,2,1);
+              spritey.scale.set(1,1,1);
               scene_scatterplot.add( spritey );
               //scene_scatterplot.add(rayline);
               pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
