@@ -491,7 +491,7 @@ function createGUI(){
     texture2.minFilter = THREE.LinearFilter;
    
    var material2 = new THREE.PointsMaterial({
-        size:0.2,
+        size:0.1,
         map:texture2,
         vertexColors: THREE.VertexColors, 
         alphaTest: 0.5,
@@ -560,7 +560,7 @@ function createGUI(){
     opacity:0.5
   });
 
-  var rayDistance = 1000;
+  var rayDistance = 1;
   var isPointing = false;
   var isHit = false;
   
@@ -699,7 +699,7 @@ function createGUI(){
     targetEl: element,
     arm: true,
     scene: scene_scatterplot,
-    opacity: 0.8
+    opacity: 1
 
   });
 
