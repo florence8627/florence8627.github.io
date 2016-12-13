@@ -76,6 +76,22 @@ function PickVariable(id,filename){
 }
 
 
+function CheckAllFingerExtended(frame){
+	// take leap motion frame and return true/false
+for(var i = 0; i<frame.fingers.length; i++){
+      var finger = frame.fingers[i];
+      if(finger.extended == false){
+        return false;
+      }
+      else{
+        return true;
+      }
+
+  }
+}
+
+
+
 function makeTextSprite( message, parameters ){
   if ( parameters === undefined ) parameters = {};
   
@@ -422,7 +438,7 @@ function createGUI(){
             
         });
 
-    console.log(dataPoints);
+   // console.log(dataPoints);
    
     var xExent = d3.extent(dataPoints, function (d) {return d.x; }),
         yExent = d3.extent(dataPoints, function (d) {return d.y; }),
@@ -617,39 +633,32 @@ function createGUI(){
     scene_scatterplot.updateMatrixWorld();
     
 
-    // for(var i = 0; i<frame.fingers.length; i++){
-    //   var finger = frame.fingers[i];
-    //   if((finger.type!==1 && finger.extended == true) || (finger.type==1 && finger.extended == false)){
-    //     isPointing = false;
-    //   }
-    //   else{
-    //     isPointing = true;
-    //   }
-
-    // }
+ 
 
     if(frame.valid && frame.gestures.length > 0){
-    frame.gestures.forEach(function(gesture){
-        switch (gesture.type){
-          case "circle":
-              console.log("Circle Gesture");
-              isPointing = true;
-              break;
-          case "keyTap":
-              console.log("Key Tap Gesture");
-              isPointing = false;
-              break;
+	    frame.gestures.forEach(function(gesture){
+	        switch (gesture.type){
+	          case "circle":
+	              console.log("Circle Gesture");
+	              if(!CheckAllFingerExtended(frame) ){
+	                 isPointing = true;
+	                }
+	              break;
+	          case "keyTap":
+	              console.log("Key Tap Gesture");
+	              isPointing = false;
+	              break;
 
-          case "screenTap":
-              console.log("Screen Tap Gesture");
-              isPointing = false;
-              break;
-          case "swipe":
-              console.log("Swipe Gesture");
-              isPointing = false;
-              break;
-        }
-    });
+	          case "screenTap":
+	              console.log("Screen Tap Gesture");
+	              isPointing = false;
+	              break;
+	          case "swipe":
+	              console.log("Swipe Gesture");
+	              isPointing = false;
+	              break;
+	        }
+	    });
   }
 
     if(isPointing){
@@ -670,7 +679,7 @@ function createGUI(){
          
 
           if (intersect){
-           // console.log(intersect);      
+            // console.log(intersect);      
             isHit = true ;
 
           }
@@ -681,7 +690,7 @@ function createGUI(){
             var hitdata = dataPoints[intersect.index]
 
             // var geometry = new THREE.Geometry();
-             var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
+            var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
             // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
             // geometry.vertices.push(tip_pos,data_pos);
             // var rayline = new THREE.Line(geometry,rayMaterial);
@@ -694,13 +703,13 @@ function createGUI(){
               spritey.position.set((-0.2)*positiondata.x,10,(-0.1)*positiondata.z);
              
              
-             //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
+              //spritey.position.set((-0.5)*tip_pos.x,tip_pos.y,(-0.5)*tip_pos.z);
              
               spritey.scale.set(5,5,5);
-             scene_scatterplot.add( spritey );
-             //scene_scatterplot.add(rayline);
-             pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
-             pointGeo.colorsNeedUpdate = true;
+              scene_scatterplot.add( spritey );
+              //scene_scatterplot.add(rayline);
+              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
+              pointGeo.colorsNeedUpdate = true;
             
           } 
 
