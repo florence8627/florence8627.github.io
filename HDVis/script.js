@@ -567,7 +567,7 @@ function createGUI(){
   // Connect to localhost and start getting frames
   var controller = Leap.loop({enableGestures:true}, function(frame){
     //console.log(frame);
-    if( frame.hands.length>1&&CheckAllFingerExtended(frame)){
+    if( frame.hands.length>1&&frame.hands[0].middleFinger.extended&&frame.hands[0].indexFinger.extended){
 
             // console.log(frame.hands[0].palmVelocity);
             // console.log(frame.hands[1].palmVelocity);

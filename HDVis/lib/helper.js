@@ -154,7 +154,7 @@ RayCasterManager.prototype.createRayCasterByFinger = function (rayName, finger, 
 	if (scene) scene.remove(rayCaster.mesh);
 
 
-	var tip_pos = new THREE.Vector3().fromArray(finger.stabilizedTipPosition);
+	var tip_pos = new THREE.Vector3().fromArray(finger.tipPosition);
 	var tip_dir = new THREE.Vector3().fromArray(finger.direction);
 
 
