@@ -1,5 +1,6 @@
 	var selectedVariable = ["","",""];
   var IsRotating = false;
+  var loaded_data = [];
 
 function LoadFiles(files) {
 		var file = files[0];
@@ -11,19 +12,29 @@ function LoadFiles(files) {
 		   return function(e){
 		 
 		     var csvRows = e.target.result.split("\n");
+         var objnames = [];
 		     for (var i=0; i<csvRows.length;i++){
 		     	var rowstr = "<tr>";
 		     	var csvCols = csvRows[i].split(",");
+          var obj = {};
+          
 		     	for(var j = 0; j<csvCols.length; j++){
-                    if(i==0)
-                    {
-                     rowstr = rowstr + "<td> <input type='checkbox' class='box' id='"+csvCols[j].replace(/\s/g, '')+"' onclick = PickVariable(this.id,'"+file.name+"')></br>"+csvCols[j].replace(/\s/g, '')+"</td>";
-                    }
-                    else{
-                     rowstr = rowstr + "<td>"+csvCols[j].replace(/\s/g, '')+"</td>";
-                    }
-
+              if(i==0)
+                {
+                   rowstr = rowstr + "<td> <input type='checkbox' class='box' id='"+csvCols[j].replace(/\s/g, '')+"' onclick = PickVariable(this.id,'"+file.name+"')></br>"+csvCols[j].replace(/\s/g, '')+"</td>";
+                   objnames.push(csvCols[j].replace(/\s/g, ''));
+                 }
+            }
+          for(var j = 0; j<csvCols.length; j++){
+              if(i>=1){ 
+                  rowstr = rowstr + "<td>"+csvCols[j].replace(/\s/g, '')+"</td>";
+                  obj[objnames[j]] = csvCols[j].replace(/\s/g, '')
+                    
+            }
 		     	}
+          if(i>=1){
+            loaded_data.push(obj);
+          }
 		     	rowstr = rowstr + "</tr>";
 		     	$("#csvtable").append(rowstr);
 		     	$("#loadedcsvfile").css("visibility","visible");         
@@ -407,7 +418,9 @@ function createGUI(){
 
     d3.csv(filename, function (irisd) {
 
-
+        
+        irisd = loaded_data; 
+       // console.log(irisd);
          var color =[]; 
                
         irisd.forEach(function (d,i) {
