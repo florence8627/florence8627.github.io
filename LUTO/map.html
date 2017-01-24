@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<link rel="stylesheet" type="text/css" href="menu.css"/>
+<body>
+<nav class="dropdownmenu">
+  <ul>
+    <li ><a id="home" href="map.html">LAND USE TRADE-OFF (LUTO)</a></li>
+    <!-- <li><a href="#">Select Layers</a>
+      <ul id="submenu">
+        <li><a href="#">point data</a></li>
+        <li><a href="#">polygon approximation</a></li>
+      </ul>
+    </li> -->
+    <li><a href="HowItWorks.html">How It Works</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+</nav>
+
+<article id="page">
+<div class="pagetitle">Land Use Visualization </div> 
+<div id="content">
+
+<svg id="mapsvg"></svg>
+<div class="text">Simulation Year <span id="yeartxt"></span></div>
+<svg id="slidersvg"></svg>
+<div>
+<div>
+</article>
+
+<script src="lib/d3/d3.v3.min.js"></script>
+<script src="lib/d3/topojson.v1.min.js"></script>
+<script src="lib/queue.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
