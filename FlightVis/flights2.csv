@@ -1,0 +1,36 @@
+from_airport,from_city,from_country,from_long,from_lat,to_airport,to_city,to_country,to_long,to_lat,airline,airline_country,distance
+Balandino,Chelyabinsk,Russia,61.838,55.509,Domododevo,Moscow,Russia,38.51,55.681,Aerocondor,Portugal,1458
+Balandino,Chelyabinsk,Russia,61.838,55.509,Kazan,Kazan,Russia,49.464,56.01,Aerocondor,Portugal,775
+Balandino,Chelyabinsk,Russia,61.838,55.509,Tolmachevo,Novosibirsk,Russia,83.084,55.021,Aerocondor,Portugal,1341
+Domododevo,Moscow,Russia,38.51,55.681,Balandino,Chelyabinsk,Russia,61.838,55.509,Aerocondor,Portugal,1458
+Domododevo,Moscow,Russia,38.51,55.681,Khrabrovo,Kaliningrad,Russia,20.987,55.483,Aerocondor,Portugal,1098
+Domododevo,Moscow,Russia,38.51,55.681,Kazan,Kazan,Russia,49.464,56.01,Aerocondor,Portugal,684
+Domododevo,Moscow,Russia,38.51,55.681,Beaufort Mcas,Beaufort,United States,-80.539,32.795,Aerocondor,Portugal,8612
+Domododevo,Moscow,Russia,38.51,55.681,Penza Airport,Penza,Russia,45.035,53.184,Aerocondor,Portugal,504
+Domododevo,Moscow,Russia,38.51,55.681,Bugulma Airport,Bugulma,Russia,53.336,55.066,Aerocondor,Portugal,937
+Heydar Aliyev,Baku,Azerbaijan,50.077,40.779,Beaufort Mcas,Beaufort,United States,-80.539,32.795,Aerocondor,Portugal,10393
+Khrabrovo,Kaliningrad,Russia,20.987,55.483,Domododevo,Moscow,Russia,38.51,55.681,Aerocondor,Portugal,1098
+Kazan,Kazan,Russia,49.464,56.01,Balandino,Chelyabinsk,Russia,61.838,55.509,Aerocondor,Portugal,775
+Kazan,Kazan,Russia,49.464,56.01,Domododevo,Moscow,Russia,38.51,55.681,Aerocondor,Portugal,684
+Kazan,Kazan,Russia,49.464,56.01,Pulkovo,St. Petersburg,Russia,30.437,60.333,Aerocondor,Portugal,1209
+Kazan,Kazan,Russia,49.464,56.01,Franz Josef Strauss,Munich,Germany,12.31,48.589,Aerocondor,Portugal,2621
+Kazan,Kazan,Russia,49.464,56.01,Bugulma Airport,Bugulma,Russia,53.336,55.066,Aerocondor,Portugal,265
+Pulkovo,St. Petersburg,Russia,30.437,60.333,Kazan,Kazan,Russia,49.464,56.01,Aerocondor,Portugal,1209
+Pulkovo,St. Petersburg,Russia,30.437,60.333,Beaufort Mcas,Beaufort,United States,-80.539,32.795,Aerocondor,Portugal,7920
+Pulkovo,St. Petersburg,Russia,30.437,60.333,Bugulma Airport,Bugulma,Russia,53.336,55.066,Aerocondor,Portugal,1471
+Franz Josef Strauss,Munich,Germany,12.31,48.589,Kazan,Kazan,Russia,49.464,56.01,Aerocondor,Portugal,2621
+Beaufort Mcas,Beaufort,United States,-80.539,32.795,Domododevo,Moscow,Russia,38.51,55.681,Aerocondor,Portugal,8612
+Beaufort Mcas,Beaufort,United States,-80.539,32.795,Heydar Aliyev,Baku,Azerbaijan,50.077,40.779,Aerocondor,Portugal,10393
+Beaufort Mcas,Beaufort,United States,-80.539,32.795,Pulkovo,St. Petersburg,Russia,30.437,60.333,Aerocondor,Portugal,7920
+Nizhnevartovsk,Nizhnevartovsk,Russia,76.806,61.582,Bugulma Airport,Bugulma,Russia,53.336,55.066,Aerocondor,Portugal,1538
+Tolmachevo,Novosibirsk,Russia,83.084,55.021,Balandino,Chelyabinsk,Russia,61.838,55.509,Aerocondor,Portugal,1341
+Penza Airport,Penza,Russia,45.035,53.184,Domododevo,Moscow,Russia,38.51,55.681,Aerocondor,Portugal,504
+Bugulma Airport,Bugulma,Russia,53.336,55.066,Domododevo,Moscow,Russia,38.51,55.681,Aerocondor,Portugal,937
+Bugulma Airport,Bugulma,Russia,53.336,55.066,Kazan,Kazan,Russia,49.464,56.01,Aerocondor,Portugal,265
+Bugulma Airport,Bugulma,Russia,53.336,55.066,Pulkovo,St. Petersburg,Russia,30.437,60.333,Aerocondor,Portugal,1471
+Bugulma Airport,Bugulma,Russia,53.336,55.066,Nizhnevartovsk,Nizhnevartovsk,Russia,76.806,61.582,Aerocondor,Portugal,1538
+Andahuaylas,Andahuaylas,Peru,-72.918,-13.511,Jorge Chavez Intl,Lima,Peru,-76.524,-11.37,Star Peru (2I),Peru,458
+Rodriguez Ballon,Arequipa,Peru,-71.306,-15.902,Juliaca,Juliaca,Peru,-69.597,-15.112,Star Peru (2I),Peru,203
+Rodriguez Ballon,Arequipa,Peru,-71.306,-15.902,Jorge Chavez Intl,Lima,Peru,-76.524,-11.37,Star Peru (2I),Peru,756
+Coronel Fap Alfredo Mendivil Duarte,Ayacucho,Peru,-73.675,-12.592,Jorge Chavez Intl,Lima,Peru,-76.524,-11.37,Star Peru (2I),Peru,338
+Teniente Alejandro Velasco Astete Intl,Cuzco,Peru,-71.898,-13.227,Jorge Chavez Intl,Lima,Peru,-76.524,-11.37,Star Peru (2I),Peru,543

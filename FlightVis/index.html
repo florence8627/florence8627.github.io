@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset=utf-8>
+<title>Airline-Vis@FlorenceWang</title>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<link rel="stylesheet" href="lib/jq/jquery-ui.css">
+</head>
+<body>
+<script src="lib/d3/d3.v3.min.js"></script>
+<script src="lib/d3/d3.hive.v0.min.js"></script>
+<script src="lib/jq/jquery-2.1.1.js"></script>
+<script src="lib/jq/jquery-ui.js"></script>
+<section id="flightsSec"  class="ui-widget-content">
+<div id="flightsTitle" class="title">
+<span class="titlebutton">
+ <img src="images/folder.png" height="22px" width="22px" alt="load file" id="loadfile" class="imgbutton" title="load file from your computer"/>  
+</span>
+<span id="flightstitletext" class="titletext">AirlineVis Panel</span>
+</div>
+<input type="file" id="flightfileinput" style="visibility:hidden" onchange="LoadflightFiles(this.files)"/>
+</section>
+<section id="displaySec">
+<div id="countrycontrol" class="control">
+<table>
+<tr>
+<td>
+ Add A Country to Visualize :
+<select id="countrylist" class="text ui-widget-content ui-corner-all" style="width:150px;font-size:11px;">
+  <option value="-1" selected="selected">List of Countries</option>
+</select>
+</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>
+Select Number of Airlines to Compare:
+<select id="compareoption"  class="text ui-widget-content ui-corner-all" style="width:150px;font-size:11px;">
+  <option value="1" >Top 1 Airline</option>
+  <option value="3" >Top 3 Airlines</option>
+  <option value="5" selected="selected">Top 5 Airlines</option>
+  <option value="10" >Top 10 Airlines</option>
+  <option value="-1" >All Airlines</option>
+</select>
+</td>
+</tr>
+</table>
+</div>
+<div id="flightvisdiv" >
+<!-- flight svg goes here--> 
+
+</div>
+</section>
+<script src="script.js"></script>
+</body>
+</html>

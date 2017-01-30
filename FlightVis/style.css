@@ -1,0 +1,152 @@
+body{
+font-family: Arial;
+font-size: 11px;
+
+}
+svg{
+/* border radius */
+ -moz-border-radius: 10px;
+ -webkit-border-radius: 10px;
+  border-radius: 10px;
+ /* box shadow */
+-moz-box-shadow: 0px 2px 2px #cecece;
+-webkit-box-shadow: 0px 2px 2px #cecece;
+box-shadow: 0 2px 2px #8b8b8b;
+margin-left: 5px;
+
+}
+.background{
+opacity:0.7;
+fill:black;
+
+}
+
+
+#flightsSec{
+width:1250px;
+height:30px;
+margin: auto auto;
+text-align:center;
+border: 0px;
+}
+#displaySec{
+margin: auto auto;
+width:1250px;
+}
+.title{
+width:100%;
+height:30px;
+background-color:gray;
+/* border radius */
+ -moz-border-radius: 10px;
+ -webkit-border-radius: 10px;
+  border-radius: 10px;
+ /* box shadow */
+-moz-box-shadow: 0px 2px 3px #cecece;
+-webkit-box-shadow: 0px 3px 3px #cecece;
+box-shadow: 0 3px 4px #8b8b8b;
+
+
+}
+.titlebutton{
+float:left;
+}
+.titletext{
+color: white;
+font-family:Arial;
+font-weight:bold;
+font-size:13px;
+color:white;
+}
+.control{
+margin-top:5px;
+margin-left:5px;
+float:left;
+width:1240px;
+background-color:lightsteelblue;
+}
+
+#flightvisdiv{
+margin-top: 10px;
+width:1250px;
+opacity:1;
+float:left;
+}
+
+
+.imgbutton{
+cursor: pointer;
+
+}
+
+.imgbutton:hover{
+/* box shadow */
+border: 1px dotted white;
+/* box shadow */
+-moz-box-shadow: 1px 1px 1px #cecece;
+-webkit-box-shadow: 1px 1px 1px #cecece;
+box-shadow: 1px 1px 1px #8b8b8b;
+}
+
+.axis{
+  stroke: gray;
+  stroke-width: 3px;
+  opacity:0.5;
+}
+
+.link {
+  fill: none;
+  stroke: pink;
+  stroke-width: 1.5px;
+  cursor:pointer;
+}
+
+.linkhover {
+  stroke: yellow;
+  stroke-width: 2px;
+  fill:none;
+  cursor:pointer;
+}
+
+.airlinenode{
+stroke:gray;
+opacity:1;
+stroke-width:1px;
+
+}
+.nodehover{
+stroke:yellow;
+cursor:pointer;
+fill:yellow;
+}
+.nodetext{
+font-size:10px;
+fill:pink;
+}
+.countrytext{
+font-size:13px;
+fill:yellow;
+font-weight:bold;
+}
+.nodetexthover{
+font-size:12px;
+font-weight:bold;
+fill:white;
+cursor:pointer;
+}
+.cityline{
+stroke:white;
+stroke-width:0.5px;
+}
+.connectline{
+stroke-width:2px;
+opacity:0.6
+}
+
+
+
+
+
+
+
+
