@@ -1,5 +1,6 @@
 	var selectedVariable = ["","",""];
   var IsRotating = false;
+  var HasGrid = true;
   var loaded_data = [];
 
 function LoadFiles(files) {
@@ -82,23 +83,23 @@ function PickVariable(id,filename){
         }
      
      // console.log(selectedVariable);
-      $("#variable").html("<span style='color:red'>Variable X: &nbsp;" + selectedVariable[0] + "</span><br>"+"<span style='color:green'>Variable Y: &nbsp;" + selectedVariable[1] + "</span><br>"+"<span style='color:white'>Variable Z: &nbsp;" + selectedVariable[2] + "</span><br>");
+      $("#variable").html("<span style='color:red'>Variable X: &nbsp;" + selectedVariable[0] + "</span><br>"+"<span style='color:green'>Variable Y: &nbsp;" + selectedVariable[1] + "</span><br>"+"<span style='color:#99CCFF'>Variable Z: &nbsp;" + selectedVariable[2] + "</span><br>");
 
 }
 
 
 function CheckAllFingerExtended(frame){
 	// take leap motion frame and return true/false
-for(var i = 0; i<frame.fingers.length; i++){
-      var finger = frame.fingers[i];
-      if(finger.extended == false){
-        return false;
-      }
-      else{
-        return true;
-      }
+  for(var i = 0; i<frame.fingers.length; i++){
+        var finger = frame.fingers[i];
+        if(finger.extended == false){
+          return false;
+        }
+        else{
+          return true;
+        }
 
-  }
+    }
 }
 
 
@@ -181,14 +182,14 @@ function roundRect(ctx, x, y, w, h, r) {
 
 // from http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 function hexToRgb(hex) { 
-//TODO rewrite with vector output
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-      } : null;
-    }
+  //TODO rewrite with vector output
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+              r: parseInt(result[1], 16),
+              g: parseInt(result[2], 16),
+              b: parseInt(result[3], 16)
+        } : null;
+      }
 
 //Function to call when you mouseover a node
 function mover(d) {
@@ -222,6 +223,7 @@ $( document ).ready(function(){
     // one renderer
 
     var renderer_scatterplot = new THREE.WebGLRenderer();
+    
     var element = renderer_scatterplot.domElement;
     var container = document.getElementById('3dscatterplot');
         container.appendChild(element);
@@ -246,13 +248,13 @@ $( document ).ready(function(){
 
   
    var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
-       camcontrols.noPan = false;
+       camcontrols.noPan = true;
        camcontrols.noZoom = false;
        element.addEventListener('click', fullscreen, false);
    var light = new THREE.PointLight(0xffffff, 1, 1000);
        light.position.set(0,50,0);
        scene_scatterplot.add(light);
-
+   var keyboard = new KeyboardState();
 
 function resize() {
 
@@ -301,12 +303,13 @@ function createGUI(){
       var stereocontrol = gui.addFolder('Stereo Effect');
       var vrcontrol = gui.addFolder('VR Effect');
       var loaddata = gui.addFolder("Load Data");
-      var loadcsv
+      var loadcsv;
         // setup the control gui
         var controls = new function () {
         //     // we need the first child, since it's a multimaterial
              
                this.Rotation = false;
+               this.Grid = true;
                this.Stereo = false;
                this.ParallaxBarrier = false;
                this.EyeSeperation = 3;
@@ -320,7 +323,51 @@ function createGUI(){
             
              };
 
-            
+            this.EnableGrid = function(){
+               HasGrid = !HasGrid;
+               //console.log(HasGrid);
+               if(HasGrid){
+                  var cubegeo = new THREE.BoxBufferGeometry( 10,10,10 );
+                  var gridwhitetexture = new THREE.TextureLoader().load("texture/whitegrid.png");
+                  var gridblacktexture = new THREE.TextureLoader().load("texture/blackgrid.png");
+                  gridwhitetexture.minFilter = THREE.LinearFilter;
+                  gridblacktexture.minFilter = THREE.LinearFilter;
+                  var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
+                  var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
+                  var cube = new THREE.Mesh( cubegeo, new THREE.MeshFaceMaterial([cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2]) );
+                  cube.name = "cube"  
+                  for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
+                       obj = scene_scatterplot.children[i];
+                       if (obj.name == "scatter"){
+                           obj.add(cube);
+                         }
+                           
+                         
+                     }
+                 
+                  
+               }
+               else{
+                  for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
+                       obj = scene_scatterplot.children[i];
+                       if (obj.name == "scatter"){
+                           plot = obj;
+                           console.log(plot);
+                           for (var j = plot.children.length -1; j>=0; j--){
+                                if(plot.children[j].name == "cube"){
+                                   //console.log("cube found")
+                                   plot.remove(plot.children[j]);
+                                 }
+                           }
+                         }
+                           
+                         
+                     }
+                 }
+
+
+            };
+
             this.EnableStereo = function(){
              if(controls.Stereo){
                  effect = new THREE.StereoEffect(renderer_scatterplot);
@@ -328,7 +375,7 @@ function createGUI(){
                  effect.focalLength = 15;
              }
              else{
-              delete effect
+              delete effect;
              }
 
              }
@@ -356,7 +403,7 @@ function createGUI(){
               }
               else{
                
-               delete effect
+               delete effect;
               
               
               }
@@ -391,7 +438,8 @@ function createGUI(){
          };
        
 
-           viscontrol.add(controls, 'Rotation').onChange(controls.EnableRotate);         
+           viscontrol.add(controls, 'Rotation').onChange(controls.EnableRotate);  
+           viscontrol.add(controls, 'Grid').onChange(controls.EnableGrid);       
            stereocontrol.add(controls, 'Stereo').onChange(controls.EnableStereo);
            stereocontrol.add(controls, 'EyeSeperation',-50,50).onChange(controls.ChangeEyeSeperation);
            stereocontrol.add(controls, 'FocalLength',-20,20).onChange(controls.ChangefocalLength);
@@ -433,7 +481,7 @@ function createGUI(){
             
         });
 
-   // console.log(dataPoints);
+    console.log(dataPoints);
    
     var xExent = d3.extent(dataPoints, function (d) {return d.x; }),
         yExent = d3.extent(dataPoints, function (d) {return d.y; }),
@@ -485,6 +533,9 @@ function createGUI(){
          v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)),
          v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax))
 
+    
+
+
   
     );
     var lineMat = new THREE.LineBasicMaterial({
@@ -495,10 +546,19 @@ function createGUI(){
     });
     var linebox = new THREE.Line(lineBoxGeo, lineMat);
     linebox.type = THREE.Lines;
+    linebox.name = "line";
     scatterPlot.add(linebox);
 
-
-
+    var cubegeo = new THREE.BoxBufferGeometry( 10,10,10 );
+    var gridwhitetexture = new THREE.TextureLoader().load("texture/whitegrid.png");
+    var gridblacktexture = new THREE.TextureLoader().load("texture/blackgrid.png");
+    gridwhitetexture.minFilter = THREE.LinearFilter;
+    gridblacktexture.minFilter = THREE.LinearFilter;
+    var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
+    var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
+    var cube = new THREE.Mesh( cubegeo, new THREE.MeshFaceMaterial([cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2]) );
+    cube.name = "cube"  
+    scatterPlot.add(cube);
     
     var texture2 = new THREE.TextureLoader().load("texture/ball.png")
     texture2.minFilter = THREE.LinearFilter;
@@ -508,7 +568,7 @@ function createGUI(){
         map:texture2,
         vertexColors: THREE.VertexColors, 
         alphaTest: 0.5,
-        opacity:1,
+        opacity:0.9,
         transparent: false
     
 
@@ -517,6 +577,7 @@ function createGUI(){
 
 
     var pointGeo = new THREE.Geometry();
+
     for (var i = 0; i <dataPoints.length; i++) {
         var x = xScale(dataPoints[i].x);
         var y = yScale(dataPoints[i].y);
@@ -525,31 +586,40 @@ function createGUI(){
         //prototypeV[bmus-1]['prototype15'].Color;
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
        
-        // //Color based on class #
-        // if(i<50){
-        // pointGeo.colors.push(new THREE.Color().setRGB(1,0,0));
-        // }
-        // if(i>=50&&i<100){
-        // pointGeo.colors.push(new THREE.Color().setRGB(0,1,0));
-        // }
-        // if(i>=100&&i<150){
-        // pointGeo.colors.push(new THREE.Color().setRGB(0,0,1));
-        //  }
-
-
-         pointGeo.colors.push(new THREE.Color().setRGB(1,1,0));
+        pointGeo.colors.push(new THREE.Color().setRGB(1,1,0));
 
     }
-
+        
         var points = new THREE.Points(pointGeo, material2);
      
         points.name = "points"
         scatterPlot.add(points);
-        var axes = new THREE.AxisHelper(2);
+        var axes = new THREE.AxisHelper(12);
+        axes.position.set(-5,-5,-5)
+        var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 80, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+        xlabel.position.set(6,-5,-4);
+        xlabel.scale.set(1,0.5,1);
+        var ylabel = makeTextSprite( "Y "+ selectedVariable[1], { fontsize: 80, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        ylabel.position.set(-5,6,-4);
+        ylabel.scale.set(1,0.5,1);
+        var zlabel = makeTextSprite( "Z "+ selectedVariable[2], { fontsize: 80, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        zlabel.position.set(-5,-5,6);
+        zlabel.scale.set(1,0.5,1);
+        var origin = makeTextSprite( "(0,0,0)", { fontsize: 70, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        origin.position.set(-5,-5,-5.5);
+        origin.scale.set(1,0.5,1);
+        scatterPlot.add(xlabel);
+        scatterPlot.add(ylabel);
+        scatterPlot.add(zlabel);
+        scatterPlot.add(origin);
+
         scatterPlot.add(axes);
-      
+
+  
         scene_scatterplot.add(scatterPlot);
-        scatterPlot.rotation.y = Math.PI;
+       
+        scatterPlot.rotation.x = Math.PI;
+        
        
  
         
@@ -726,7 +796,7 @@ function createGUI(){
             rotationDegree = 0.001;        
           }
          scatterPlot.rotation.z+=rotationDegree;
-
+         
         if(typeof effect !== 'undefined'){
            effect.render(scene_scatterplot, camera_scatterplot);
            
@@ -741,12 +811,20 @@ function createGUI(){
    
   function animate() {
 
-     
+         keyboard.update();
          updatePosition(IsRotating);
          resize();
          camera_scatterplot.updateProjectionMatrix();
 
          camcontrols.update(clock.getDelta());
+
+         if(keyboard.pressed("R")){
+          camera_scatterplot.position.set(0,15,0);
+          scatterPlot.position.set(0,0,0);
+          scatterPlot.rotation.set(Math.PI, 0, 0);
+
+         }
+
          if(typeof effect !== 'undefined'){
              effect.render(scene_scatterplot, camera_scatterplot);
              
