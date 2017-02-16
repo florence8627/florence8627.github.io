@@ -105,6 +105,7 @@ function CheckAllFingerExtended(frame){
 
 
 function makeTextSprite( message, parameters ){
+
   if ( parameters === undefined ) parameters = {};
   
   var fontface = parameters.hasOwnProperty("fontface") ? 
@@ -122,7 +123,7 @@ function makeTextSprite( message, parameters ){
   var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
     parameters["backgroundColor"] : { r:0, g:0, b:0, a:1.0 };
 
-  //var spriteAlignment = THREE.SpriteAlignment.topLeft;
+  
     
   var canvas = document.createElement('canvas');
 
@@ -132,7 +133,10 @@ function makeTextSprite( message, parameters ){
     
   // get size data (height depends only on font size)
   var metrics = context.measureText( message );
-  var textWidth = metrics.width;
+  var textWidth = 2*metrics.width;
+ 
+
+ 
   
   // background color
   context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
@@ -143,6 +147,7 @@ function makeTextSprite( message, parameters ){
 
   context.lineWidth = borderThickness;
   roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+  
   // 1.4 is extra height factor for text below baseline: g,j,p,q.
   
   // text color
@@ -155,10 +160,9 @@ function makeTextSprite( message, parameters ){
   texture.needsUpdate = true;
   texture.minFilter = THREE.LinearFilter;
 
-  var spriteMaterial = new THREE.SpriteMaterial( 
-    { map: texture} );
+  var spriteMaterial = new THREE.SpriteMaterial( { map: texture} );
   var sprite = new THREE.Sprite( spriteMaterial );
-  
+ 
   return sprite;  
 }
 
@@ -481,7 +485,7 @@ function createGUI(){
             
         });
 
-    console.log(dataPoints);
+    
    
     var xExent = d3.extent(dataPoints, function (d) {return d.x; }),
         yExent = d3.extent(dataPoints, function (d) {return d.y; }),
@@ -596,18 +600,18 @@ function createGUI(){
         scatterPlot.add(points);
         var axes = new THREE.AxisHelper(12);
         axes.position.set(-5,-5,-5)
-        var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 80, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+        var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
         xlabel.position.set(6,-5,-4);
-        xlabel.scale.set(1,0.5,1);
-        var ylabel = makeTextSprite( "Y "+ selectedVariable[1], { fontsize: 80, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        xlabel.scale.set(2,1,2);
+        var ylabel = makeTextSprite( "Y "+ selectedVariable[1], { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
         ylabel.position.set(-5,6,-4);
-        ylabel.scale.set(1,0.5,1);
-        var zlabel = makeTextSprite( "Z "+ selectedVariable[2], { fontsize: 80, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        ylabel.scale.set(2,1,2);
+        var zlabel = makeTextSprite( "Z "+ selectedVariable[2], { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
         zlabel.position.set(-5,-5,6);
-        zlabel.scale.set(1,0.5,1);
-        var origin = makeTextSprite( "(0,0,0)", { fontsize: 70, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        zlabel.scale.set(2,1,2);
+        var origin = makeTextSprite( "(0,0,0)", { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
         origin.position.set(-5,-5,-5.5);
-        origin.scale.set(1,0.5,1);
+        origin.scale.set(2,1,2);
         scatterPlot.add(xlabel);
         scatterPlot.add(ylabel);
         scatterPlot.add(zlabel);
