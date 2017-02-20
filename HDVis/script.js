@@ -775,7 +775,7 @@ function createGUI(){
     opacity:0.5
   });
 
-  var rayDistance = 100;
+  var rayDistance = 10000;
   var isPointing = false;
   var isHit = false;
   
