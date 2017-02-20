@@ -1,4 +1,5 @@
 	var selectedVariable = ["","",""];
+  var PColor = {min:"#FFFF00", max:"#FFFF00"};
   var IsRotating = false;
   var HasGrid = true;
   var loaded_data = [];
@@ -123,7 +124,8 @@ function makeTextSprite( message, parameters ){
   var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
     parameters["backgroundColor"] : { r:0, g:0, b:0, a:1.0 };
 
-  
+  var textColor = parameters.hasOwnProperty("textColor") ? 
+    parameters["textColor"] : { r:255, g:255, b:255, a:1.0  };
     
   var canvas = document.createElement('canvas');
 
@@ -151,7 +153,9 @@ function makeTextSprite( message, parameters ){
   // 1.4 is extra height factor for text below baseline: g,j,p,q.
   
   // text color
-  context.fillStyle = "rgba(255, 255, 255, 1.0)";
+ //F
+  context.fillStyle = "rgba(" + textColor.r + "," + textColor.g + ","
+                  + textColor.b + "," + textColor.a + ")"; //"rgba(255, 255, 255, 1.0)";
 
   context.fillText( message, borderThickness, fontsize + borderThickness);
   
@@ -160,8 +164,10 @@ function makeTextSprite( message, parameters ){
   texture.needsUpdate = true;
   texture.minFilter = THREE.LinearFilter;
 
+
   var spriteMaterial = new THREE.SpriteMaterial( { map: texture} );
   var sprite = new THREE.Sprite( spriteMaterial );
+  
  
   return sprite;  
 }
@@ -307,6 +313,7 @@ function createGUI(){
       var stereocontrol = gui.addFolder('Stereo Effect');
       var vrcontrol = gui.addFolder('VR Effect');
       var loaddata = gui.addFolder("Load Data");
+      var colormap = viscontrol.addFolder("Color Map");
       var loadcsv;
         // setup the control gui
         var controls = new function () {
@@ -319,6 +326,9 @@ function createGUI(){
                this.EyeSeperation = 3;
                this.FocalLength = 15;
                this.WebVR = false;
+               this.z_color_min = PColor.min;
+               this.z_color_max = PColor.max;
+               this.color = PColor.min;
 
             this.EnableRotate = function () {
                   IsRotating = !IsRotating;
@@ -344,6 +354,7 @@ function createGUI(){
                        obj = scene_scatterplot.children[i];
                        if (obj.name == "scatter"){
                            obj.add(cube);
+                           break;
                          }
                            
                          
@@ -356,13 +367,16 @@ function createGUI(){
                        obj = scene_scatterplot.children[i];
                        if (obj.name == "scatter"){
                            plot = obj;
-                           console.log(plot);
+                          // console.log(plot);
                            for (var j = plot.children.length -1; j>=0; j--){
                                 if(plot.children[j].name == "cube"){
                                    //console.log("cube found")
                                    plot.remove(plot.children[j]);
+                                   break;
                                  }
                            }
+
+                           break;
                          }
                            
                          
@@ -437,6 +451,82 @@ function createGUI(){
               }
 
              }
+          this.updateColorMap = function(){
+             var color_min = new THREE.Color(controls.z_color_min);
+             var color_max = new THREE.Color(controls.z_color_max);
+             PColor.min = "#"+color_min.getHexString();
+             PColor.max = "#"+color_max.getHexString();
+             var plot;
+             var points; 
+             for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
+               obj = scene_scatterplot.children[i];
+               if (obj.name == "scatter"){
+                     plot = obj;
+                     break;                                                               
+                 }
+             }
+             for(var j = plot.children.length -1; j>=0; j--){
+                if(plot.children[j].name == "points"){                                
+                   points = plot.children[j];
+                   break;
+                   
+                 }
+             }
+            var texture = new THREE.TextureLoader().load("texture/ball.png")
+                texture.minFilter = THREE.LinearFilter;
+   
+             points.material = new THREE.PointsMaterial({
+                                  _needsUpdate:true,
+                                  size:0.15,
+                                  map:texture,
+                                  alphaTest: 0.9,
+                                  opacity:0.9,
+                                  transparent: false,
+                                  vertexColors: THREE.VertexColors
+                                 
+                              });
+             var hslcolor_min = color_min.getHSL();
+             var hslcolor_max = color_max.getHSL();
+             var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
+             var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
+        
+            
+             for (var k = 0; k<points.geometry.vertices.length; k++){
+               
+               var data_z = loaded_data[k][selectedVariable[2]];
+               var newhue = hslcolor_min.h+data_z*((hslcolor_max.h - hslcolor_min.h)/(data_z_max-data_z_min));
+               points.geometry.colors[k] = new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l); 
+             }
+             points.geometry.colorsNeedUpdate = true;
+             //console.log(points);
+
+          }
+
+          this.updateColor = function(){
+
+            var colorobj = new THREE.Color(controls.color);
+            PColor.min = "#"+colorobj.getHexString();
+            PColor.max = "#"+colorobj.getHexString();
+            controls.z_color_min = PColor.min;
+            controls.z_color_max = PColor.max;
+          
+            for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
+               obj = scene_scatterplot.children[i];
+               if (obj.name == "scatter"){
+                     plot = obj;
+                           for (var j = plot.children.length -1; j>=0; j--){
+                                if(plot.children[j].name == "points"){
+                                   //console.log("cube found")
+                                   plot.children[j].material.color = colorobj;
+                                   plot.children[j].material.vertexColors = THREE.NoColors;
+                                   break;
+                                 }
+                           }
+                   
+               break;  
+             }
+           }
+          }
 
 
          };
@@ -452,11 +542,13 @@ function createGUI(){
            vrcontrol.add(controls, 'WebVR').onChange(controls.EnableVR);
           
            var params = {
-            loadFile: function(){
-              $("#fileinput").click();
-               }
+            loadFile: function(){$("#fileinput").click();}
             };
-           loadcsv = loaddata.add(params, 'loadFile').name('Load CSV');
+        
+          loaddata.add(params, 'loadFile').name('Load CSV');
+          loaddata.addColor(controls, 'color').onChange(controls.updateColor);
+          colormap.addColor(controls,'z_color_min').onChange(controls.updateColorMap).listen();
+          colormap.addColor(controls,'z_color_max').onChange(controls.updateColorMap).listen();
          
 }
 
@@ -564,16 +656,18 @@ function createGUI(){
     cube.name = "cube"  
     scatterPlot.add(cube);
     
-    var texture2 = new THREE.TextureLoader().load("texture/ball.png")
-    texture2.minFilter = THREE.LinearFilter;
+    var texture = new THREE.TextureLoader().load("texture/ball.png")
+    texture.minFilter = THREE.LinearFilter;
    
-   var material2 = new THREE.PointsMaterial({
+   var material = new THREE.PointsMaterial({
         size:0.15,
-        map:texture2,
-        vertexColors: THREE.VertexColors, 
-        alphaTest: 0.5,
+        map:texture,
+        alphaTest: 0.9,
         opacity:0.9,
-        transparent: false
+        transparent: false,
+       // vertexColors: THREE.VertexColors
+        vertexColors: THREE.NoColors,
+        color: new THREE.Color(PColor.min)
     
 
     });
@@ -587,26 +681,29 @@ function createGUI(){
         var y = yScale(dataPoints[i].y);
         var z = zScale(dataPoints[i].z);
        
-        //prototypeV[bmus-1]['prototype15'].Color;
+       var hslcolor_min = new THREE.Color(PColor.min).getHSL();
+       var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+        
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-       
-        pointGeo.colors.push(new THREE.Color().setRGB(1,1,0));
+        var newhue = hslcolor_min.h+dataPoints[i].z*Math.abs(hslcolor_max.h - hslcolor_min.h);
+        pointGeo.colors.push(new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l)); 
 
+       
     }
         
-        var points = new THREE.Points(pointGeo, material2);
+        var points = new THREE.Points(pointGeo, material);
      
         points.name = "points"
         scatterPlot.add(points);
         var axes = new THREE.AxisHelper(12);
         axes.position.set(-5,-5,-5)
-        var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+        var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 50, textColor:{r:255, g:0, b:0, a:1}, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
         xlabel.position.set(6,-5,-4);
         xlabel.scale.set(2,1,2);
-        var ylabel = makeTextSprite( "Y "+ selectedVariable[1], { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        var ylabel = makeTextSprite( "Y "+ selectedVariable[1], { fontsize: 50, textColor:{r:0, g:255, b:0, a:1}, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
         ylabel.position.set(-5,6,-4);
         ylabel.scale.set(2,1,2);
-        var zlabel = makeTextSprite( "Z "+ selectedVariable[2], { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
+        var zlabel = makeTextSprite( "Z "+ selectedVariable[2], { fontsize: 50, textColor:{r:153, g:204, b:255, a:1}, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
         zlabel.position.set(-5,-5,6);
         zlabel.scale.set(2,1,2);
         var origin = makeTextSprite( "(0,0,0)", { fontsize: 50, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0} } );
@@ -615,9 +712,40 @@ function createGUI(){
         scatterPlot.add(xlabel);
         scatterPlot.add(ylabel);
         scatterPlot.add(zlabel);
-        scatterPlot.add(origin);
-
+        scatterPlot.add(origin);   
         scatterPlot.add(axes);
+       if(!isNaN(vpts.xCen) && !isNaN(vpts.yCen) && !isNaN(vpts.zCen)){
+          var xmid =  makeTextSprite( vpts.xCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+          xmid.position.set(0.5,-5,-5.5);
+          xmid.scale.set(1,1,1);
+          var ymid =  makeTextSprite( vpts.yCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+          ymid.position.set(-5,0.5,-5.5);
+          ymid.scale.set(1,1,1);
+          var zmid =  makeTextSprite( vpts.zCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+          zmid.position.set(-5,-5, 0.5);
+          zmid.scale.set(1,1,1);
+
+          var xmax =  makeTextSprite( vpts.xMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+          xmax.position.set(5.5,-5,-5.5);
+          xmax.scale.set(1,1,1);
+          var ymax =  makeTextSprite( vpts.yMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+          ymax.position.set(-5,5.5,-5.5);
+          ymax.scale.set(1,1,1);
+          var zmax =  makeTextSprite( vpts.zMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+          zmax.position.set(-5,-5, 5);
+          zmax.scale.set(1,1,1);
+
+          scatterPlot.add(xmid);
+          scatterPlot.add(ymid);
+          scatterPlot.add(zmid);
+
+          scatterPlot.add(xmax);
+          scatterPlot.add(ymax);
+          scatterPlot.add(zmax);
+        
+        
+       }
+     
 
   
         scene_scatterplot.add(scatterPlot);
