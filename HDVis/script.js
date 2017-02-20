@@ -685,7 +685,7 @@ function createGUI(){
        var hslcolor_max = new THREE.Color(PColor.max).getHSL();
         
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-        var newhue = hslcolor_min.h+dataPoints[i].z*Math.abs(hslcolor_max.h - hslcolor_min.h);
+        var newhue = hslcolor_min.h+dataPoints[i].z*(hslcolor_max.h - hslcolor_min.h);
         pointGeo.colors.push(new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l)); 
 
        
@@ -775,7 +775,7 @@ function createGUI(){
     opacity:0.5
   });
 
-  var rayDistance = 10000;
+  var rayDistance = 100;
   var isPointing = false;
   var isHit = false;
   
@@ -806,9 +806,16 @@ function createGUI(){
     
     rayCasterManager.removeAllRays(scene_scatterplot);
     $("#pointresult").html("");
-
+      var hslcolor_min = new THREE.Color(PColor.min).getHSL();
+      var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+      var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
+      var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
+        
     for (var i = 0; i<pointGeo.colors.length; i++){
-      pointGeo.colors[i] = new THREE.Color().setRGB(1,1,0);
+      //pointGeo.colors[i] = new THREE.Color().setRGB(1,1,0);
+        var data_z = loaded_data[i][selectedVariable[2]];
+        var newhue = hslcolor_min.h+data_z*((hslcolor_max.h - hslcolor_min.h)/(data_z_max-data_z_min));
+        pointGeo.colors[i] = new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l); 
      }
 
     for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
