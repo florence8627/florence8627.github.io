@@ -6,8 +6,10 @@
 
 function LoadFiles(files) {
 		var file = files[0];
-      alert(file.type);
-		if (file.type.match("text/csv")||file.type.match("application/vnd.ms-excel")) {
+      
+      //testing file extension using regular expression
+      var regex = new RegExp(".+(.csv)$");
+		if (regex.test(file.name)) {
 		     reader = new FileReader();
 		     reader.onload = (function (file){
 		   
