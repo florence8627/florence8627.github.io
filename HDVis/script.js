@@ -6,7 +6,7 @@
 
 function LoadFiles(files) {
 		var file = files[0];
-
+      alert(file.type);
 		if (file.type.match("text/csv")||file.type.match("application/vnd.ms-excel")) {
 		     reader = new FileReader();
 		     reader.onload = (function (file){
