@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <title>Comparative Pathway Visualisation</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script type="text/javascript" src="ColorConversion.js"> </script>
+  <script src="lib/d3.v4.min.js"></script>
+  <script src="lib/queue.v1.min.js"></script>
+  <script type="text/javascript" src="kegg.js"></script>
+ 
+  
+  
+</head>
+<script> 
+</script>
+<body>
+<div id="content-background">
+ 	
+		<div class="title"> Comparative Pathway Visualisation</div>  
+     <p>
+      Choose a metabolic pathway map
+
+      <select id="dropdown" >
+        <option value="kgml/ec00561.xml">Clycerolipid Metabolism</option>
+        <option value="kgml/ec00564.xml">Clycerophospholipid Metabolism</option>
+        <option value="kgml/ko00030.xml">random</option>
+        <option value="blahh">blahh</option>
+        </select>
+    </p>
+
+    <div id="container"></div>
+</div>
+
+
+<script>
+    var kgml_file = 'kgml/ec00561.xml'; 
+    var containerid = 'container';
+    document.getElementById("dropdown").selectedIndex = 0;
+    loadViz();
+
+    d3.select("#dropdown").on("change", function(){
+      var select = document.getElementById("dropdown");
+      kgml_file = select.options[select.selectedIndex].value;
+      loadViz();
+
+    });
+
+    function loadViz(){
+
+      console.log("in loadViz()");
+      queue()
+      .defer(d3.csv, 'data/6666666.190274-EC.csv')
+      .defer(d3.csv, 'data/6666666.190275-EC.csv')
+      .defer(d3.csv, 'data/6666666.190276-EC.csv')
+      .defer(d3.csv, 'data/6666666.190277-EC.csv')
+      .await(makePathwayMap)
+
+    }
+     
+     function makePathwayMap(error, data1, data2, data3, data4){ 
+
+       var xhttp = new XMLHttpRequest();
+       xhttp.open("GET", kgml_file, true);
+       xhttp.send();
+       xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var kgml = this.responseText;
+
+        	var k = new kgml_to_svg(kgml, containerid, function(){
+               
+                    d3.select("#kegg_svg").append("rect").attr("x",10).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
+                                           .on("mouseover", function(){
+                                           	d3.select(this).style("fill","red");
+                                           	d3.selectAll(".data1").attr("stroke","red");
+                                           	d3.selectAll(".data1").attr("stroke-width", "1px");
+                                           })
+                                           .on("mouseout", function(){
+                                           	d3.select(this).style("fill","gray");                                    
+                                           	d3.selectAll(".data1").attr("stroke-width", "0px");
+                                           });
+                    d3.select("#kegg_svg").append("text").attr("x", 20).attr("y", 20).text("6666.190274-fragi P121").style("fill","gray");
+                    d3.select("#kegg_svg").append("rect").attr("x",210).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
+                                           .on("mouseover", function(){
+                                           	d3.select(this).style("fill","red");
+                                           	d3.selectAll(".data2").attr("stroke","red");
+                                           	d3.selectAll(".data2").attr("stroke-width", "1px");
+                                           })
+                                           .on("mouseout", function(){
+                                           	d3.select(this).style("fill","gray");                                     
+                                           	d3.selectAll(".data2").attr("stroke-width", "0px");
+                                           });
+                    d3.select("#kegg_svg").append("text").attr("x", 220).attr("y", 20).text("6666.190275-fragi B25").style("fill","gray");
+                    d3.select("#kegg_svg").append("rect").attr("x",410).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
+                                           .on("mouseover", function(){
+                                           	d3.select(this).style("fill","red");
+                                           	d3.selectAll(".data3").attr("stroke","red");
+                                           	d3.selectAll(".data3").attr("stroke-width", "1px");
+                                           })
+                                           .on("mouseout", function(){
+                                           	d3.select(this).style("fill","gray");                                      
+                                           	d3.selectAll(".data3").attr("stroke-width", "0px");
+                                           });
+                    d3.select("#kegg_svg").append("text").attr("x", 420).attr("y", 20).text("6666.190276-Chloroaphis").style("fill","gray");
+                    d3.select("#kegg_svg").append("rect").attr("x",610).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
+                                            .on("mouseover", function(){
+                                           	d3.select(this).style("fill","red");
+                                           	d3.selectAll(".data4").attr("stroke","red");
+                                           	d3.selectAll(".data4").attr("stroke-width", "1px");
+                                           })
+                                           .on("mouseout", function(){
+                                           	d3.select(this).style("fill","gray");                                     
+                                           	d3.selectAll(".data4").attr("stroke-width", "0px");
+                                           });
+                    d3.select("#kegg_svg").append("text").attr("x", 620).attr("y", 20).text("6666.190277-Lundensis").style("fill","gray");
+
+                   //data1
+                     for(var i = 0 ; i<data1.length; i++){
+                     
+                       	EC_No = data1[i]["EC Numbers"];
+                       	EC_No = EC_No.substr(3);               
+                       	occurrence = parseInt(data1[i]["Occurrence"]);	
+                       //console.log(EC_No);
+                       //console.log(occurrence);
+                       	k.highlight(EC_No, occurrence, 0, "yellow", 0.3,"data1");
+
+                       }         	
+                   //data2                                      
+                     for(var i = 0 ; i<data2.length; i++){
+                     
+                       	EC_No = data2[i]["EC Numbers"];
+                       	EC_No = EC_No.substr(3);               
+                       	occurrence = parseInt(data2[i]["Occurrence"]);	
+                       	//console.log(EC_No);
+                       	//console.log(occurrence);
+                       	k.highlight(EC_No, occurrence, 1, "yellow", 0.3,"data2");
+
+                       }
+                   //data3
+                     for(var i = 0 ; i<data3.length; i++){
+                     
+                       	EC_No = data3[i]["EC Numbers"];
+                       	EC_No = EC_No.substr(3);               
+                       	occurrence = parseInt(data3[i]["Occurrence"]);	
+                       	//console.log(EC_No);
+                       	//console.log(occurrence);
+                       	k.highlight(EC_No, occurrence, 2, "yellow", 0.3,"data3");
+
+                       }
+                   //data4
+                     for(var i = 0 ; i<data4.length; i++){
+                     
+                       	EC_No = data4[i]["EC Numbers"];
+                       	EC_No = EC_No.substr(3);               
+                       	occurrence = parseInt(data4[i]["Occurrence"]);	
+                       	//console.log(EC_No);
+                       	//console.log(occurrence);
+                       	k.highlight(EC_No, occurrence, 3, "yellow", 0.3,"data4");
+
+                       }
+
+  	      });
+
+        }
+      }
+  }
+
+
+
+
+
+	
+   
+
+
+
+</script>
+</body>
+</html>
