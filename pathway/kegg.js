@@ -309,15 +309,15 @@ kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fi
 		    var i = position
 			//for (var i = 0; i<5; i++){
 				var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-	            rect.setAttributeNS(null, 'x', x+9.5*i);
-	            rect.setAttributeNS(null, 'y', y-rect_height/2-1);
-	            rect.setAttributeNS(null, 'height', rect_height);
-	            rect.setAttributeNS(null, 'width', rect_width);
+	            rect.setAttributeNS(null, 'x', (x+9.5*i).toFixed(1));
+	            rect.setAttributeNS(null, 'y', (y-rect_height/2-1).toFixed(1));
+	            rect.setAttributeNS(null, 'height', (rect_height).toFixed(0));
+	            rect.setAttributeNS(null, 'width', (rect_width).toFixed(0));
 	            rect.setAttributeNS(null, 'class', className);
 	            
 	            //var rect_color = hslToRgb(0.2*(i+1), 0.5, 0.5);
 	            var rect_color = hslToRgb(0.6, 0.5, 0.85-0.5*(1-1/occurrence));
-	            var colorStr = "rgb("+rect_color[0].toString() + "," + rect_color[1].toString() + "," + rect_color[2].toString() + ")";
+	            var colorStr = "rgb("+rect_color[0].toFixed(0).toString() + "," + rect_color[1].toFixed(0).toString() + "," + rect_color[2].toFixed(0).toString() + ")";
 	            rect.style.fill= colorStr;
 	           
 	         //   console.log(rect.style.fill);
