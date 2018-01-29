@@ -317,8 +317,8 @@ kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fi
 	            
 	            //var rect_color = hslToRgb(0.2*(i+1), 0.5, 0.5);
 	            var rect_color = hslToRgb(0.6, 0.5, 0.85-0.5*(1-1/occurrence));
-	            rect.style.fill= "rgb("+rect_color[0].toString() + "," + rect_color[1].toString() + "," + rect_color[2].toString() + ")";
-	          
+	            var colorStr = "rgb("+rect_color[0].toString() + "," + rect_color[1].toString() + "," + rect_color[2].toString() + ")";
+	            rect.style.fill= colorStr;
 	           
 	         //   console.log(rect.style.fill);
 	         var newText = document.createElementNS("http://www.w3.org/2000/svg","text");
