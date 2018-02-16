@@ -280,12 +280,14 @@ kgml_to_svg.prototype.indexer = function() {
 }
 
 
-kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className) {
+kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className, genomeCount) {
 	// code: highlighted code
 	// occurrence: the number of occurrences of certain ECs. 
 	// position: code for the heatmap rectangle, ranging from 0 to 4
 	// color: color for the entire ec block
 	// fill_opacity: opacity for the ec block
+	// className: class name for the individual svg object
+	// GenomeCount: total number of comparative genomes..determining the width of individual squares
 
 
 	//if code in index, proceed
@@ -304,12 +306,14 @@ kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fi
 			var y = parseFloat(nel.getAttribute("y"));
 			var width = parseFloat(nel.getAttribute("width"));
 			var height = parseFloat(nel.getAttribute("height"));
-		    var rect_width = 9;
+		    var rect_width = parseInt((width/genomeCount).toFixed(0));
+		    //console.log(rect_width);
 		    var rect_height = height/1.5;
-		    var i = position
+		    var i = position;
 			//for (var i = 0; i<5; i++){
+				
 				var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-	            rect.setAttributeNS(null, 'x', (x+9.5*i).toFixed(1));
+	            rect.setAttributeNS(null, 'x', (x+(rect_width+0.5)*i).toFixed(1));
 	            rect.setAttributeNS(null, 'y', (y-rect_height/2-1).toFixed(1));
 	            rect.setAttributeNS(null, 'height', (rect_height).toFixed(0));
 	            rect.setAttributeNS(null, 'width', (rect_width).toFixed(0));
@@ -320,18 +324,20 @@ kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fi
 	            var colorStr = "rgb("+rect_color[0].toFixed(0).toString() + "," + rect_color[1].toFixed(0).toString() + "," + rect_color[2].toFixed(0).toString() + ")";
 	            rect.style.fill= colorStr;
 	           
-	         //   console.log(rect.style.fill);
+	            //console.log(rect.style.fill);
 	         var newText = document.createElementNS("http://www.w3.org/2000/svg","text");
-                 newText.setAttributeNS(null,"x",x+9.5*i+2.5);     
+                 newText.setAttributeNS(null,"x",x+(rect_width+0.6)*i);     
                  newText.setAttributeNS(null,"y",y-rect_height/2+5.5); 
-                 newText.setAttributeNS(null,"font-size","7");
+                 newText.setAttributeNS(null,"font-size","5");
                  newText.style.fill ="white"
 
                 var textNode = document.createTextNode(occurrence);
-                newText.appendChild(textNode);
-	   
-       		    nel.parentNode.appendChild(rect);
-       		    nel.parentNode.appendChild(newText);
+               
+               var group = document.getElementById("heatmap");
+	            
+       		   group.appendChild(rect);
+       		   group.appendChild(newText);
+       		   
        		// }
 			
 			//verify if tag name is correct and change color and opacity

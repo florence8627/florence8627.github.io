@@ -3,7 +3,7 @@
 	background-color: lightgray;
    	text-align: center;	
 	padding: 10px;
-	width:1500px;
+	width:1800px;
 }
 
 #container{
@@ -11,9 +11,17 @@
 	text-align: center;
 
 }
-svg{
+#kegg_svg{
 	background-color:white;
+	border: 0px;
 }
+#legend{
+	position: absolute;
+    left: 1300px;
+    top: 10px;
+    background-color:lightyellow;
+}
+
 .title{
 	 font-family: "Times New Roman", Georgia, Serif;
 	 color: black;
@@ -32,7 +40,5 @@ svg{
 	width:200px;
 }
 
-svg{
-	border: 0px;
-}
+
 

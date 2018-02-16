@@ -20,16 +20,31 @@
 <div id="content-background">
  	
 		<div class="title"> Comparative Pathway Visualisation</div>  
+    <p>
+      Choose the number of genomes for comparative visualisation
+     <select id="GenomeCountDropdown" >
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+    </p>
      <p>
       Choose a metabolic pathway map
-
       <select id="dropdown" >
         <option value="kgml/ec00561.xml">Clycerolipid Metabolism</option>
         <option value="kgml/ec00564.xml">Clycerophospholipid Metabolism</option>
         <option value="kgml/ko00030.xml">random</option>
         <option value="blahh">blahh</option>
-        </select>
+      </select>
     </p>
+
+
 
     <div id="container"></div>
 </div>
@@ -37,13 +52,42 @@
 
 <script>
     var kgml_file = 'kgml/ec00561.xml'; 
-    var containerid = 'container';
+    var containerid = 'container'; 
+    var fileList = ['data/6666666.190274-EC.csv',
+                    'data/6666666.190275-EC.csv',
+                    'data/6666666.190276-EC.csv',
+                    'data/6666666.190277-EC.csv',
+                    'data/6666666.190562-EC.csv',
+                    'data/6666666.192298-EC.csv',
+                    'data/6666666.192299-EC.csv',
+                    'data/6666666.192300-EC.csv',
+                    'data/6666666.192305-EC.csv']
     document.getElementById("dropdown").selectedIndex = 0;
+    document.getElementById("GenomeCountDropdown").selectedIndex = 8;
+    var GenomeCount = parseInt(document.getElementById("GenomeCountDropdown").selectedIndex)+1;
+   
     loadViz();
-
+    
     d3.select("#dropdown").on("change", function(){
       var select = document.getElementById("dropdown");
+      var genomeCount_select = document.getElementById("GenomeCountDropdown");
       kgml_file = select.options[select.selectedIndex].value;
+      GenomeCount = parseInt(genomeCount_select.options[genomeCount_select.selectedIndex].value);
+      console.log(GenomeCount);
+      d3.selectAll("#legend").remove();
+      d3.selectAll("#heatmap").remove();
+      loadViz();
+
+    });
+
+    d3.select("#GenomeCountDropdown").on("change", function(){
+      var select = document.getElementById("dropdown");
+      var genomeCount_select = document.getElementById("GenomeCountDropdown");
+      kgml_file = select.options[select.selectedIndex].value;
+      GenomeCount = parseInt(genomeCount_select.options[genomeCount_select.selectedIndex].value);
+      console.log(GenomeCount);
+      d3.selectAll("#legend").remove();
+      d3.selectAll("#heatmap").remove();
       loadViz();
 
     });
@@ -52,16 +96,22 @@
 
       console.log("in loadViz()");
       queue()
-      .defer(d3.csv, 'data/6666666.190274-EC.csv')
-      .defer(d3.csv, 'data/6666666.190275-EC.csv')
-      .defer(d3.csv, 'data/6666666.190276-EC.csv')
-      .defer(d3.csv, 'data/6666666.190277-EC.csv')
-      .await(makePathwayMap)
+      .defer(d3.csv, fileList[0])
+      .defer(d3.csv, fileList[1])
+      .defer(d3.csv, fileList[2])
+      .defer(d3.csv, fileList[3])
+      .defer(d3.csv, fileList[4])
+      .defer(d3.csv, fileList[5])
+      .defer(d3.csv, fileList[6])
+      .defer(d3.csv, fileList[7])
+      .defer(d3.csv, fileList[8])
+      .awaitAll(makePathwayMap)
 
     }
      
-     function makePathwayMap(error, data1, data2, data3, data4){ 
-
+     function makePathwayMap(error, results){ 
+       //console.log(results);
+       //console.log("Maximum # of genomes loaded: " + results.length);
        var xhttp = new XMLHttpRequest();
        xhttp.open("GET", kgml_file, true);
        xhttp.send();
@@ -70,110 +120,56 @@
           var kgml = this.responseText;
 
         	var k = new kgml_to_svg(kgml, containerid, function(){
-               
-                    d3.select("#kegg_svg").append("rect").attr("x",10).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
+                    
+                    //var legend = d3.select("#kegg_svg").append("g").attr("id", "legend");
+                    var legend = d3.select("#container").append("svg").attr("id", "legend").attr("width",250).attr("height",160).append("g");
+                    var svg_width = parseInt(d3.select("#kegg_svg").attr("width"));
+                    console.log(svg_width);
+
+                    for(var i = 0; i<GenomeCount; i++){
+
+                       // legend.append("rect").attr("class", "data"+i).attr("x",svg_width-220).attr("y",20*(i+2)).attr("width",10).attr("height",10).style("fill","gray")
+                       legend.append("rect").attr("class", "data"+i).attr("x",10).attr("y", 15*(i+0.5)).attr("width",10).attr("height",10).style("fill","gray")
                                            .on("mouseover", function(){
                                            	d3.select(this).style("fill","red");
-                                           	d3.selectAll(".data1").attr("stroke","red");
-                                           	d3.selectAll(".data1").attr("stroke-width", "1px");
+                                           	var className = d3.select(this).attr("class");
+                                      
+                                           	d3.selectAll("."+className).attr("stroke","red");
+                                           	d3.selectAll("."+className).attr("stroke-width", "1px");
                                            })
                                            .on("mouseout", function(){
+                                            var className = d3.select(this).attr("class");
                                            	d3.select(this).style("fill","gray");                                    
-                                           	d3.selectAll(".data1").attr("stroke-width", "0px");
+                                           	d3.selectAll("."+className).attr("stroke-width", "0px");
                                            });
-                    d3.select("#kegg_svg").append("text").attr("x", 20).attr("y", 20).text("6666.190274-fragi P121").style("fill","gray");
-                    d3.select("#kegg_svg").append("rect").attr("x",210).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
-                                           .on("mouseover", function(){
-                                           	d3.select(this).style("fill","red");
-                                           	d3.selectAll(".data2").attr("stroke","red");
-                                           	d3.selectAll(".data2").attr("stroke-width", "1px");
-                                           })
-                                           .on("mouseout", function(){
-                                           	d3.select(this).style("fill","gray");                                     
-                                           	d3.selectAll(".data2").attr("stroke-width", "0px");
-                                           });
-                    d3.select("#kegg_svg").append("text").attr("x", 220).attr("y", 20).text("6666.190275-fragi B25").style("fill","gray");
-                    d3.select("#kegg_svg").append("rect").attr("x",410).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
-                                           .on("mouseover", function(){
-                                           	d3.select(this).style("fill","red");
-                                           	d3.selectAll(".data3").attr("stroke","red");
-                                           	d3.selectAll(".data3").attr("stroke-width", "1px");
-                                           })
-                                           .on("mouseout", function(){
-                                           	d3.select(this).style("fill","gray");                                      
-                                           	d3.selectAll(".data3").attr("stroke-width", "0px");
-                                           });
-                    d3.select("#kegg_svg").append("text").attr("x", 420).attr("y", 20).text("6666.190276-Chloroaphis").style("fill","gray");
-                    d3.select("#kegg_svg").append("rect").attr("x",610).attr("y",10).attr("width",10).attr("height",10).style("fill","gray")
-                                            .on("mouseover", function(){
-                                           	d3.select(this).style("fill","red");
-                                           	d3.selectAll(".data4").attr("stroke","red");
-                                           	d3.selectAll(".data4").attr("stroke-width", "1px");
-                                           })
-                                           .on("mouseout", function(){
-                                           	d3.select(this).style("fill","gray");                                     
-                                           	d3.selectAll(".data4").attr("stroke-width", "0px");
-                                           });
-                    d3.select("#kegg_svg").append("text").attr("x", 620).attr("y", 20).text("6666.190277-Lundensis").style("fill","gray");
+                     //  legend.append("text").attr("x",svg_width-200).attr("y", 20*(i+2)+10).text(fileList[i]).style("fill","gray");
+                     legend.append("text").attr("x",30).attr("y", 15*(i+0.5)+10).text(fileList[i]).style("fill","gray");
+                    }
+                       
 
-                   //data1
-                     for(var i = 0 ; i<data1.length; i++){
-                     
-                       	EC_No = data1[i]["EC Numbers"];
-                       	EC_No = EC_No.substr(3);               
-                       	occurrence = parseInt(data1[i]["Occurrence"]);	
-                       //console.log(EC_No);
-                       //console.log(occurrence);
-                       	k.highlight(EC_No, occurrence, 0, "yellow", 0.3,"data1");
+                    d3.select("#kegg_svg").append("g").attr("id", "heatmap");
 
-                       }         	
-                   //data2                                      
-                     for(var i = 0 ; i<data2.length; i++){
-                     
-                       	EC_No = data2[i]["EC Numbers"];
-                       	EC_No = EC_No.substr(3);               
-                       	occurrence = parseInt(data2[i]["Occurrence"]);	
-                       	//console.log(EC_No);
-                       	//console.log(occurrence);
-                       	k.highlight(EC_No, occurrence, 1, "yellow", 0.3,"data2");
+                     for(var i = 0; i<GenomeCount; i++){
+                            data = results[i];
+                        for(var j = 0; j<data.length; j++){
+                            
+                            EC_No = data[j]["EC Numbers"];
+                            EC_No = EC_No.substr(3);               
+                            occurrence = parseInt(data[j]["Occurrence"]);  
+                            //console.log(EC_No);
+                            //console.log(occurrence);
 
-                       }
-                   //data3
-                     for(var i = 0 ; i<data3.length; i++){
-                     
-                       	EC_No = data3[i]["EC Numbers"];
-                       	EC_No = EC_No.substr(3);               
-                       	occurrence = parseInt(data3[i]["Occurrence"]);	
-                       	//console.log(EC_No);
-                       	//console.log(occurrence);
-                       	k.highlight(EC_No, occurrence, 2, "yellow", 0.3,"data3");
+                            //kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className, genomeCount) 
+                            k.highlight(EC_No, occurrence,i, "yellow", 0.3,"data"+i, GenomeCount);
 
-                       }
-                   //data4
-                     for(var i = 0 ; i<data4.length; i++){
-                     
-                       	EC_No = data4[i]["EC Numbers"];
-                       	EC_No = EC_No.substr(3);               
-                       	occurrence = parseInt(data4[i]["Occurrence"]);	
-                       	//console.log(EC_No);
-                       	//console.log(occurrence);
-                       	k.highlight(EC_No, occurrence, 3, "yellow", 0.3,"data4");
-
-                       }
+                        }
+                     }
 
   	      });
 
         }
       }
   }
-
-
-
-
-
-	
-   
-
 
 
 </script>
