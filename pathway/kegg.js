@@ -280,7 +280,7 @@ kgml_to_svg.prototype.indexer = function() {
 }
 
 
-kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className, genomeCount) {
+kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className, rectid, genomeCount) {
 	// code: highlighted code
 	// occurrence: the number of occurrences of certain ECs. 
 	// position: code for the heatmap rectangle, ranging from 0 to 4
@@ -306,7 +306,7 @@ kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fi
 			var y = parseFloat(nel.getAttribute("y"));
 			var width = parseFloat(nel.getAttribute("width"));
 			var height = parseFloat(nel.getAttribute("height"));
-		    var rect_width = parseInt((width/genomeCount).toFixed(0));
+		    var rect_width = parseInt((width/genomeCount).toFixed(1));
 		    //console.log(rect_width);
 		    var rect_height = height/1.5;
 		    var i = position;
@@ -315,9 +315,10 @@ kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fi
 				var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
 	            rect.setAttributeNS(null, 'x', (x+(rect_width+0.5)*i).toFixed(1));
 	            rect.setAttributeNS(null, 'y', (y-rect_height/2-1).toFixed(1));
-	            rect.setAttributeNS(null, 'height', (rect_height).toFixed(0));
-	            rect.setAttributeNS(null, 'width', (rect_width).toFixed(0));
+	            rect.setAttributeNS(null, 'height', (rect_height).toFixed(1));
+	            rect.setAttributeNS(null, 'width', (rect_width).toFixed(1));
 	            rect.setAttributeNS(null, 'class', className);
+	            rect.setAttributeNS(null, 'id', rectid);
 	            
 	            //var rect_color = hslToRgb(0.2*(i+1), 0.5, 0.5);
 	            var rect_color = hslToRgb(0.6, 0.5, 0.85-0.5*(1-1/occurrence));

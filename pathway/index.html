@@ -32,6 +32,7 @@
         <option value="7">7</option>
         <option value="8">8</option>
         <option value="9">9</option>
+        <option value="10">10</option>
       </select>
     </p>
      <p>
@@ -61,9 +62,11 @@
                     'data/6666666.192298-EC.csv',
                     'data/6666666.192299-EC.csv',
                     'data/6666666.192300-EC.csv',
-                    'data/6666666.192305-EC.csv']
+                    'data/6666666.192305-EC.csv',
+                    'data/6666666.171352-EC.csv'
+                    ]
     document.getElementById("dropdown").selectedIndex = 0;
-    document.getElementById("GenomeCountDropdown").selectedIndex = 8;
+    document.getElementById("GenomeCountDropdown").selectedIndex = 9;
     var GenomeCount = parseInt(document.getElementById("GenomeCountDropdown").selectedIndex)+1;
    
     loadViz();
@@ -105,6 +108,7 @@
       .defer(d3.csv, fileList[6])
       .defer(d3.csv, fileList[7])
       .defer(d3.csv, fileList[8])
+      .defer(d3.csv, fileList[9])
       .awaitAll(makePathwayMap)
 
     }
@@ -127,23 +131,27 @@
                     console.log(svg_width);
 
                     for(var i = 0; i<GenomeCount; i++){
-
+                       //  legend.append("text").attr("x",svg_width-200).attr("y", 20*(i+2)+10).text(fileList[i]).style("fill","gray");
+                      legend.append("text").attr("class", "text"+i).attr("x",30).attr("y", 15*(i+0.5)+10).text(fileList[i]).style("fill","gray");
                        // legend.append("rect").attr("class", "data"+i).attr("x",svg_width-220).attr("y",20*(i+2)).attr("width",10).attr("height",10).style("fill","gray")
-                       legend.append("rect").attr("class", "data"+i).attr("x",10).attr("y", 15*(i+0.5)).attr("width",10).attr("height",10).style("fill","gray")
+                       legend.append("rect").attr("class", "legend"+i).attr("x",10).attr("y", 15*(i+0.5)).attr("width",10).attr("height",10).style("fill","gray")
                                            .on("mouseover", function(){
                                            	d3.select(this).style("fill","red");
-                                           	var className = d3.select(this).attr("class");
-                                      
-                                           	d3.selectAll("."+className).attr("stroke","red");
-                                           	d3.selectAll("."+className).attr("stroke-width", "1px");
+
+                                           	var className_index = +d3.select(this).attr("class").substr(6);
+                                            console.log(className_index);
+
+                                           	d3.selectAll(".data"+className_index).attr("stroke","red");
+                                           	d3.selectAll(".data"+className_index).attr("stroke-width", "1px");
+                                            d3.select(".text"+className_index).style("fill","red");
                                            })
                                            .on("mouseout", function(){
-                                            var className = d3.select(this).attr("class");
+                                            var className_index = d3.select(this).attr("class").substr(6);
                                            	d3.select(this).style("fill","gray");                                    
-                                           	d3.selectAll("."+className).attr("stroke-width", "0px");
+                                           	d3.selectAll(".data"+className_index).attr("stroke-width", "0px");
+                                             d3.select(".text"+className_index).style("fill","gray");
                                            });
-                     //  legend.append("text").attr("x",svg_width-200).attr("y", 20*(i+2)+10).text(fileList[i]).style("fill","gray");
-                     legend.append("text").attr("x",30).attr("y", 15*(i+0.5)+10).text(fileList[i]).style("fill","gray");
+                    
                     }
                        
 
@@ -159,11 +167,31 @@
                             //console.log(EC_No);
                             //console.log(occurrence);
 
-                            //kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className, genomeCount) 
-                            k.highlight(EC_No, occurrence,i, "yellow", 0.3,"data"+i, GenomeCount);
-
+                            //kgml_to_svg.prototype.highlight = function(code, occurrence, position, color, fill_opacity, className, rectid, genomeCount) 
+                            k.highlight(EC_No, occurrence,i, "yellow", 0.3,"data"+i, "id"+j, GenomeCount);
+                           
                         }
+
+                         d3.selectAll(".data"+i).on("mouseover", function(){
+                             
+                               var className_index = d3.select(this).attr("class").substr(4);
+                               d3.selectAll(".data"+className_index).attr("stroke","red");
+                               d3.selectAll(".data"+className_index).attr("stroke-width","1px");
+                               d3.select(".legend"+className_index).style("fill", "red");
+                               d3.select(".text"+className_index).style("fill","red");
+                             
+                            })
+                            .on("mouseout", function(){
+
+                               var className_index = d3.select(this).attr("class").substr(4);
+                               d3.selectAll(".data"+className_index).attr("stroke-width","0px");
+                               d3.select(".legend"+className_index).style("fill", "gray");
+                               d3.select(".text"+className_index).style("fill","gray");
+                            });
+
                      }
+
+
 
   	      });
 
