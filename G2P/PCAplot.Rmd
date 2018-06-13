@@ -32,7 +32,15 @@ See below for an example of the heatmap for the annotation result of 6666666.121
         This browser does not support PDFs. Please download the PDF to view it: <a href="ScottEC-new/6666666.121215-F1791-EC.csv.pdf">Download PDF</a>.</p>
     </embed>
 </object>
-In the generated heatmap, EC numbers (Rows of the table) and their presence in all the pathways (columns of the table) are indicated by a binary value, with red being present (e.g. 1) and gray being not present (e.g. 0).
+In the generated heatmap, EC numbers (Rows of the table) and their presence in all the pathways (columns of the table) are indicated by a binary value, with red being present (e.g. 1) and gray being not present (e.g. 0). After the heatmap table is generated, a vector is obtained by summarizing each column of the table.Then a matrix is constructed by assembling the list of vectors, where each vector represents a genome.
+```{r}
+rownames(GenomeMatrix)<-names
+colnames(GenomeMatrix)<-colnames(MapMatrix)
+knitr::kable(GenomeMatrix[,1:7])
+
+```
+Then Principle Component Analysis (PCA) is done on the above matrix.
+
 ```{r}
 
 pca<-prcomp(GenomeMatrix)
