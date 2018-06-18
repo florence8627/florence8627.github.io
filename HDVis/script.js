@@ -437,17 +437,19 @@ function createGUI(){
                     dummy.lookAt(scene_scatterplot.position);
                     scene_scatterplot.add(dummy);
                     dummy.add(camera_scatterplot)
-                  camcontrols = new THREE.VRControls(camera_scatterplot);
-                  effect = new THREE.VREffect(renderer_scatterplot);
-                if ( WEBVR.isAvailable() === true ) {
+                 // camcontrols = new THREE.VRControls(camera_scatterplot);
+                 // effect = new THREE.VREffect(renderer_scatterplot);
+                 // if ( WEBVR.isAvailable() === true ) {
 
                   //document.body.appendChild( WEBVR.getButton( effect ) );
-                   WEBVR.getVRDisplay( function ( display ){
-                    renderer_scatterplot.vr.enabled = true;
-                    renderer_scatterplot.vr.setDevice(display);
-                   });
+                   renderer_scatterplot.vr.enabled = true;
+                   renderer_scatterplot.vr.userHeight = 0; // TOFIX
+                   document.body.appendChild( renderer_scatterplot.domElement );
+
+                   document.body.appendChild( WEBVR.createButton( renderer_scatterplot, { frameOfReferenceType: 'eye-level' } ) );
+
             
-                 }
+               //  }
 
               }
               else{
