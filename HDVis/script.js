@@ -350,7 +350,7 @@ function createGUI(){
                   gridblacktexture.minFilter = THREE.LinearFilter;
                   var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
                   var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
-                  var cube = new THREE.Mesh( cubegeo, new THREE.MeshFaceMaterial([cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2]) );
+                  var cube = new THREE.Mesh( cubegeo, [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
                   cube.name = "cube"  
                   for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
                        obj = scene_scatterplot.children[i];
@@ -441,7 +441,11 @@ function createGUI(){
                   effect = new THREE.VREffect(renderer_scatterplot);
                 if ( WEBVR.isAvailable() === true ) {
 
-                  document.body.appendChild( WEBVR.getButton( effect ) );
+                  //document.body.appendChild( WEBVR.getButton( effect ) );
+                   WEBVR.getVRDisplay( function ( display ){
+                    renderer_scatterplot.vr.enabled = true;
+                    renderer_scatterplot.vr.setDevice(display);
+                   });
             
                  }
 
@@ -654,7 +658,7 @@ function createGUI(){
     gridblacktexture.minFilter = THREE.LinearFilter;
     var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
     var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
-    var cube = new THREE.Mesh( cubegeo, new THREE.MeshFaceMaterial([cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2]) );
+    var cube = new THREE.Mesh( cubegeo, [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
     cube.name = "cube"  
     scatterPlot.add(cube);
     
