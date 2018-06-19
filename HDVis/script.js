@@ -437,7 +437,7 @@ function createGUI(){
                  dummy.lookAt(scene_scatterplot.position);
                  scene_scatterplot.add(dummy);
                  dummy.add(camera_scatterplot)
-                 camcontrols = new THREE.VRControls(camera_scatterplot);
+                 // camcontrols = new THREE.VRControls(camera_scatterplot);
                  //  effect = new THREE.VREffect(renderer_scatterplot);
                  // if ( WEBVR.isAvailable() === true ) {
 
