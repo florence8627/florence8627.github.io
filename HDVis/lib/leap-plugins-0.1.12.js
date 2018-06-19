@@ -1,8 +1,8 @@
 /*    
- * LeapJS-Plugins  - v0.1.11pre - 2015-04-08    
+ * LeapJS-Plugins  - v0.1.12 - 2016-11-16    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
- * Copyright 2015 LeapMotion, Inc    
+ * Copyright 2016 LeapMotion, Inc    
  *    
  * Licensed under the Apache License, Version 2.0 (the "License");    
  * you may not use this file except in compliance with the License.    
@@ -20,9 +20,11 @@
 
 //CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
 (function() {
-  var HandMesh, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
+  var HandMesh, THREE, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
 
   scope = null;
+
+  THREE = typeof require !== 'undefined' ? require('three') : window.THREE;
 
   initScene = function(targetEl, scale) {
     var camera, far, height, near, renderer, width;
@@ -37,8 +39,8 @@
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(width, height);
     renderer.domElement.className = "leap-boneHand";
-    renderer.shadowMapEnabled = true;
-    renderer.shadowMapType = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     targetEl.appendChild(renderer.domElement);
     near = 1;
     far = 10000;
@@ -132,14 +134,14 @@
           mesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
           mesh.name = "hand-bone-" + j;
           mesh.material.color.copy(jointColor);
-          mesh.renderDepth = ((i * 9) + (2 * j)) / 36;
+          mesh.renderOrder = ((i * 9) + (2 * j)) / 36;
           mesh.castShadow = true;
           scope.scene.add(mesh);
           finger.push(mesh);
           mesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32), material.clone());
           mesh.name = "hand-joint-" + j;
           mesh.material.color.copy(boneColor);
-          mesh.renderDepth = ((i * 9) + (2 * j) + 1) / 36;
+          mesh.renderOrder = ((i * 9) + (2 * j) + 1) / 36;
           mesh.castShadow = true;
           scope.scene.add(mesh);
           finger.push(mesh);
@@ -338,11 +340,10 @@
     scope.addShadowCamera = function() {
       scope.light = new THREE.SpotLight(0xffffff, 1);
       scope.light.castShadow = true;
-      scope.light.shadowDarkness = 0.8;
-      scope.light.shadowMapWidth = 1024;
-      scope.light.shadowMapHeight = 1024;
-      scope.light.shadowCameraNear = 0.5 / 0.001;
-      scope.light.shadowCameraFar = 3 / 0.001;
+      scope.light.shadow.mapSize.width = 1024;
+      scope.light.shadow.mapSize.height = 1024;
+      scope.light.shadow.camera.near = 0.5 / 0.001;
+      scope.light.shadow.camera.far = 3 / 0.001;
       scope.light.position.set(0, 1000, 1000);
       scope.light.target.position.set(0, 0, -1000);
       scope.camera.add(scope.light.target);
@@ -1835,6 +1836,24 @@ Recording.prototype = {
       callback.call(this, responseData.frames);
     }
 
+  },
+
+  loadCompressedRecording: function(compressedData, callback) {
+    var decompressedData = this.decompress(compressedData);
+    decompressedData = JSON.parse(decompressedData);
+    if (decompressedData.metadata.formatVersion == 2) {
+      decompressedData.frames = this.unPackFrameData(decompressedData.frames);
+    }
+
+    this.metadata = decompressedData.metadata;
+
+    console.log('Recording loaded:', this.metadata);
+
+    this.loading = false;
+
+    if (callback) {
+      callback.call(this, decompressedData.frames);
+    }
   }
 
 };
@@ -2168,7 +2187,7 @@ Recording.prototype = {
 
 
     // Accepts a hash with any of
-    // URL, recording, metadata
+    // URL, recording, metadata, compressedRecording
     // once loaded, the recording is immediately activated
     setRecording: function (options) {
       var player = this;
@@ -2229,6 +2248,10 @@ Recording.prototype = {
           player.controller.emit('playback.ajax:complete', player, this);
         });
 
+      } else if (options.compressedRecording) {
+        this.recording.loadCompressedRecording(options.compressedRecording, function(frames){
+          loadComplete.call(this, frames);
+        });
       }
 
 

@@ -432,21 +432,18 @@ function createGUI(){
 
             this.EnableVR = function(){
               if(controls.WebVR){
-                    dummy = new THREE.Camera();
-                    dummy.position.set(0,13,0);
-                    dummy.lookAt(scene_scatterplot.position);
-                    scene_scatterplot.add(dummy);
-                    dummy.add(camera_scatterplot)
-                 // camcontrols = new THREE.VRControls(camera_scatterplot);
-                 // effect = new THREE.VREffect(renderer_scatterplot);
+                 dummy = new THREE.Camera();
+                 dummy.position.set(0,13,0);
+                 dummy.lookAt(scene_scatterplot.position);
+                 scene_scatterplot.add(dummy);
+                 dummy.add(camera_scatterplot)
+                 camcontrols = new THREE.VRControls(camera_scatterplot);
+                 //  effect = new THREE.VREffect(renderer_scatterplot);
                  // if ( WEBVR.isAvailable() === true ) {
 
                   //document.body.appendChild( WEBVR.getButton( effect ) );
                    renderer_scatterplot.vr.enabled = true;
-                   renderer_scatterplot.vr.userHeight = 0; // TOFIX
-                   document.body.appendChild( renderer_scatterplot.domElement );
-
-                   document.body.appendChild( WEBVR.createButton( renderer_scatterplot, { frameOfReferenceType: 'eye-level' } ) );
+                   document.body.appendChild( WEBVR.createButton( renderer_scatterplot) );
 
             
                //  }
@@ -703,7 +700,7 @@ function createGUI(){
      
         points.name = "points"
         scatterPlot.add(points);
-        var axes = new THREE.AxisHelper(12);
+        var axes = new THREE.AxesHelper(12);
         axes.position.set(-5,-5,-5)
         var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 50, textColor:{r:255, g:0, b:0, a:1}, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
         xlabel.position.set(6,-5,-4);
@@ -789,7 +786,7 @@ function createGUI(){
   
   // Connect to localhost and start getting frames
   var controller = Leap.loop({enableGestures:true}, function(frame){
-    //console.log(frame);
+   // console.log(frame);
     if( frame.hands.length>1&&frame.hands[0].middleFinger.extended&&frame.hands[0].indexFinger.extended){
 
             // console.log(frame.hands[0].palmVelocity);
