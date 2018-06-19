@@ -490,8 +490,9 @@ function createGUI(){
                                   vertexColors: THREE.VertexColors
                                  
                               });
-             var hslcolor_min = color_min.getHSL();
-             var hslcolor_max = color_max.getHSL();
+             var target = { h: 0, s: 0, l: 0 };
+             var hslcolor_min = color_min.getHSL(target);
+             var hslcolor_max = color_max.getHSL(target);
              var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
              var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
         
@@ -686,8 +687,9 @@ function createGUI(){
         var y = yScale(dataPoints[i].y);
         var z = zScale(dataPoints[i].z);
        
-       var hslcolor_min = new THREE.Color(PColor.min).getHSL();
-       var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+       var target = { h: 0, s: 0, l: 0 };
+       var hslcolor_min = new THREE.Color(PColor.min).getHSL(target);
+       var hslcolor_max = new THREE.Color(PColor.max).getHSL(target);
         
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
         var newhue = hslcolor_min.h+dataPoints[i].z*(hslcolor_max.h - hslcolor_min.h);
@@ -811,8 +813,9 @@ function createGUI(){
     
     rayCasterManager.removeAllRays(scene_scatterplot);
     $("#pointresult").html("");
-      var hslcolor_min = new THREE.Color(PColor.min).getHSL();
-      var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+      var target = { h: 0, s: 0, l: 0 };
+      var hslcolor_min = new THREE.Color(PColor.min).getHSL(target);
+      var hslcolor_max = new THREE.Color(PColor.max).getHSL(target);
       var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
       var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
         
