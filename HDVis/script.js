@@ -444,6 +444,7 @@ function createGUI(){
                   //document.body.appendChild( WEBVR.getButton( effect ) );
                    renderer_scatterplot.vr.enabled = true;
                    document.body.appendChild( WEBVR.createButton( renderer_scatterplot) );
+                    renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
 
             
                //  }
@@ -785,7 +786,7 @@ function createGUI(){
   var rayDistance = 10000;
   var isPointing = false;
   var isHit = false;
-/*  
+  
   // Connect to localhost and start getting frames
   var controller = Leap.loop({enableGestures:true}, function(frame){
    // console.log(frame);
@@ -933,7 +934,7 @@ function createGUI(){
 
   });
 
-*/
+
   function updatePosition(rotation){
 
      
