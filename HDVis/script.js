@@ -961,6 +961,7 @@ function createGUI(){
 
          keyboard.update();
          updatePosition(IsRotating);
+         
          resize();
          camera_scatterplot.updateProjectionMatrix();
 
