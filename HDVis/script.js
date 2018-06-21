@@ -485,9 +485,10 @@ function createGUI(){
                                   _needsUpdate:true,
                                   size:0.15,
                                   map:texture,
-                                  alphaTest: 0.9,
-                                  opacity:0.9,
-                                  transparent: false,
+                                  alphaTest: 0.1,
+                                  opacity:0.35,
+                                  transparent: true,
+                                  depthTest: false,
                                   vertexColors: THREE.VertexColors
                                  
                               });
@@ -670,17 +671,18 @@ function createGUI(){
    var material = new THREE.PointsMaterial({
         size:0.15,
         map:texture,
-        alphaTest: 0.9,
-        opacity:0.9,
-        transparent: false,
+        alphaTest: 0.15,
+        opacity: 0.35,
+        transparent: true,
        // vertexColors: THREE.VertexColors
         vertexColors: THREE.NoColors,
-        color: new THREE.Color(PColor.min)
+        color: new THREE.Color(PColor.min),
+        depthTest:false
     
 
     });
 
-
+    
 
     var pointGeo = new THREE.Geometry();
 
@@ -779,12 +781,13 @@ function createGUI(){
 
   var rayMaterial = new  THREE.LineBasicMaterial({
 
-    color:0xff0000,
+    color:0xffffff,
+    linewidth: 1000,
     transparent: true,
-    opacity:0.5
+    opacity:0.2
   });
 
-  var rayDistance = 10000;
+  var rayDistance = 100;
   var isPointing = false;
   var isHit = false;
   
