@@ -1,5 +1,5 @@
 	var selectedVariable = ["","",""];
-  var PColor = {min:"#FFFF00", max:"#FFFF00"};
+  var PColor = {min:"#FFFFFF", max:"#FFFFFF"};
   var IsRotating = false;
   var HasGrid = true;
   var loaded_data = [];
@@ -482,19 +482,21 @@ function createGUI(){
                 texture.minFilter = THREE.LinearFilter;
    
              points.material = new THREE.PointsMaterial({
-                                  _needsUpdate:true,
+                                 
                                   size:0.15,
                                   map:texture,
                                   alphaTest: 0.1,
                                   opacity:0.35,
                                   transparent: true,
                                   depthTest: false,
-                                  vertexColors: THREE.VertexColors
+                                
+                                 vertexColors: THREE.VertexColors
+
                                  
                               });
-             var target = { h: 0, s: 0, l: 0 };
-             var hslcolor_min = color_min.getHSL(target);
-             var hslcolor_max = color_max.getHSL(target);
+             
+             var hslcolor_min = color_min.getHSL();
+             var hslcolor_max = color_max.getHSL();
              var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
              var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
         
@@ -503,10 +505,11 @@ function createGUI(){
                
                var data_z = loaded_data[k][selectedVariable[2]];
                var newhue = hslcolor_min.h+data_z*((hslcolor_max.h - hslcolor_min.h)/(data_z_max-data_z_min));
+
                points.geometry.colors[k] = new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l); 
              }
              points.geometry.colorsNeedUpdate = true;
-             //console.log(points);
+            // console.log(points);
 
           }
 
@@ -674,8 +677,8 @@ function createGUI(){
         alphaTest: 0.15,
         opacity: 0.35,
         transparent: true,
-       // vertexColors: THREE.VertexColors
-        vertexColors: THREE.NoColors,
+        vertexColors: THREE.VertexColors,
+       // vertexColors: THREE.NoColors,
         color: new THREE.Color(PColor.min),
         depthTest:false
     
@@ -691,9 +694,9 @@ function createGUI(){
         var y = yScale(dataPoints[i].y);
         var z = zScale(dataPoints[i].z);
        
-       var target = { h: 0, s: 0, l: 0 };
-       var hslcolor_min = new THREE.Color(PColor.min).getHSL(target);
-       var hslcolor_max = new THREE.Color(PColor.max).getHSL(target);
+     
+       var hslcolor_min = new THREE.Color(PColor.min).getHSL();
+       var hslcolor_max = new THREE.Color(PColor.max).getHSL();
         
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
         var newhue = hslcolor_min.h+dataPoints[i].z*(hslcolor_max.h - hslcolor_min.h);
@@ -781,13 +784,13 @@ function createGUI(){
 
   var rayMaterial = new  THREE.LineBasicMaterial({
 
-    color:0xffffff,
-    linewidth: 1000,
+    color:0xff0000,
+    linewidth: 20,
     transparent: true,
-    opacity:0.2
+    opacity:0.5
   });
 
-  var rayDistance = 100;
+  var rayDistance = 1;
   var isPointing = false;
   var isHit = false;
   
@@ -818,14 +821,14 @@ function createGUI(){
     
     rayCasterManager.removeAllRays(scene_scatterplot);
     $("#pointresult").html("");
-      var target = { h: 0, s: 0, l: 0 };
-      var hslcolor_min = new THREE.Color(PColor.min).getHSL(target);
-      var hslcolor_max = new THREE.Color(PColor.max).getHSL(target);
+     
+      var hslcolor_min = new THREE.Color(PColor.min).getHSL();
+      var hslcolor_max = new THREE.Color(PColor.max).getHSL();
       var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
       var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
         
     for (var i = 0; i<pointGeo.colors.length; i++){
-      //pointGeo.colors[i] = new THREE.Color().setRGB(1,1,0);
+      //  // pointGeo.colors[i] = new THREE.Color().setRGB(1,1,1);
         var data_z = loaded_data[i][selectedVariable[2]];
         var newhue = hslcolor_min.h+data_z*((hslcolor_max.h - hslcolor_min.h)/(data_z_max-data_z_min));
         pointGeo.colors[i] = new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l); 
@@ -848,7 +851,7 @@ function createGUI(){
 	          case "circle":
 	              console.log("Circle Gesture");
 	              if(!CheckAllFingerExtended(frame) ){
-	                 isPointing = true;
+	                 isPointing = false;
 	                }
 	              break;
 	          case "keyTap":
@@ -862,7 +865,7 @@ function createGUI(){
 	              break;
 	          case "swipe":
 	              console.log("Swipe Gesture");
-	              isPointing = false;
+	              isPointing = true;
 	              break;
 	        }
 	    });
@@ -874,7 +877,7 @@ function createGUI(){
 
         hand = frame.hands[i];
 
-        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand.indexFinger, rayDistance, rayMaterial, scene_scatterplot);
+        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand, rayDistance, rayMaterial, scene_scatterplot);
         
 
        }
@@ -894,8 +897,11 @@ function createGUI(){
           if(isHit == true && typeof intersect !== 'undefined'){
            
             var positiondata = pointGeo.vertices[intersect.index];
-            var hitdata = dataPoints[intersect.index]
-
+            var hitdata = dataPoints[intersect.index];
+            pointGeo.colors[intersect.index].setRGB(1,0,0);
+            pointGeo.colorsNeedUpdate = true;
+           
+           
             // var geometry = new THREE.Geometry();
             // var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
             // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
@@ -909,14 +915,13 @@ function createGUI(){
               spritey.name = "label";
              // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
-             
+              
               spritey.position.set((-0.5)*positiondata.x, 10,(-0.5)*positiondata.z);
              
               spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
               //scene_scatterplot.add(rayline);
-              pointGeo.colors[intersect.index] = new THREE.Color().setRGB(1,0,0);
-              pointGeo.colorsNeedUpdate = true;
+        
             
           } 
 
@@ -934,7 +939,7 @@ function createGUI(){
     targetEl: element,
     arm: true,
     scene: scene_scatterplot,
-    opacity: 0.8
+    opacity: 1
 
   });
 
