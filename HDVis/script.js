@@ -3,6 +3,13 @@
   var IsRotating = false;
   var HasGrid = true;
   var loaded_data = [];
+  var controller1, controller2;
+  var raycaster, intersected = [];
+  var tempMatrix = new THREE.Matrix4();
+  var scatterPlot = new THREE.Object3D();
+      scatterPlot.name = "scatter";
+  var selectedIndex ;
+  var group;
 
 function LoadFiles(files) {
 		var file = files[0];
@@ -67,7 +74,7 @@ function PickVariable(id,filename){
     	}
     	if(selectedVariable.length == 3){
     	  //console.log("data/"+filename);
-          renderViz("data/"+filename,selectedVariable[0],selectedVariable[1],selectedVariable[2]);
+          renderViz("data/"+filename,scatterPlot,selectedVariable[0],selectedVariable[1],selectedVariable[2]);
 
         }
         if(selectedVariable.length>3){
@@ -226,7 +233,7 @@ $( document ).ready(function(){
   	  $("#loadedcsvfile").draggable('disable');
 	    $("#csvtitle").mouseover(function(){$("#loadedcsvfile").draggable("enable");});
 	    $("#csvtitle").mouseout(function(){$("#loadedcsvfile").draggable("disable");});
-        renderViz("data/runs8-test.csv","x","y","z");
+        renderViz("data/runs8-test.csv",scatterPlot, "x","y","z");
         createGUI();
 
    }); 
@@ -235,6 +242,7 @@ $( document ).ready(function(){
     // one renderer
 
     var renderer_scatterplot = new THREE.WebGLRenderer();
+        renderer_scatterplot.vr.enabled = true;
     
     var element = renderer_scatterplot.domElement;
     var container = document.getElementById('3dscatterplot');
@@ -267,6 +275,64 @@ $( document ).ready(function(){
        light.position.set(0,50,0);
        scene_scatterplot.add(light);
    var keyboard = new KeyboardState();
+   group = new THREE.Group();
+        scene_scatterplot.add( group );
+
+
+   // Add Hand controller
+        controller1 = new THREE.ViveController( 0 );
+        controller1.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
+        controller1.addEventListener( 'triggerdown', onTriggerDown );
+        controller1.addEventListener( 'triggerup', onTriggerUp );
+        controller1.addEventListener('gripsdown',onGripsDown );
+        controller1.addEventListener('menudown',onMenuDown );
+        scene_scatterplot.add( controller1 );
+
+        controller2 = new THREE.ViveController( 1 );
+        controller2.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
+        controller2.addEventListener( 'triggerdown', onTriggerDown );
+        controller2.addEventListener( 'triggerup', onTriggerUp );
+        controller2.addEventListener('gripsdown',onGripsDown );
+        controller2.addEventListener('menudown',onMenuDown );
+        scene_scatterplot.add( controller2 );
+
+    var meshColorOff = 0x888888;
+    var meshColorOn  = 0xcccccc;
+
+    var controllerMaterial = new THREE.MeshStandardMaterial({
+            color: meshColorOff
+        });
+    var controllerMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
+            controllerMaterial
+        );
+    var handleMesh = new THREE.Mesh(
+            new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
+            controllerMaterial
+        );
+
+        controllerMaterial.flatShading = true;
+        controllerMesh.rotation.x = -Math.PI / 2;
+        handleMesh.position.y = -0.05;
+        controllerMesh.add( handleMesh );
+        controller1.userData.mesh =  controllerMesh;
+        controller2.userData.mesh = controllerMesh;
+        controller1.add(controllerMesh.clone());
+        controller2.add(controllerMesh.clone());
+    //console.log(scene_scatterplot);    
+
+// End of Hand controller 
+// adding lines to both controllers
+var geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+        
+        
+        var line = new THREE.Line( geometry );
+        line.name = 'line';
+        line.scale.z = 5;
+        controller1.add( line.clone() );
+        controller2.add( line.clone() );
+        raycaster = new THREE.Raycaster();
+
 
 function resize() {
 
@@ -305,7 +371,110 @@ function fullscreen() {
 function v(x, y, z) {
         return new THREE.Vector3(x, y, z);
       }
+function onGripsDown(event){
+        console.log("in onGripsDown");
+        scatterPlot.position.y +=0.5;
+}
+function onMenuDown(event){
+        console.log("in onMenuDown");
+        scatterPlot.position.y -=0.5;
+    
+}
+function onTriggerDown( event ) {
+        console.log("in onTriggerDown");
+        var controller = event.target;
+        var intersections = getIntersections( controller );
+        if ( intersections.length > 0 ) {
+          var intersection = intersections[ 0 ];
+          //tempMatrix.getInverse( controller.matrixWorld );
+          var object = intersection.object;
+          console.log(intersection);
+           object.geometry.colors[intersection.index] = {r:1, g:0, b:0};
+           object.geometry.colorsNeedUpdate = true;
+           selectedIndex = intersection.index;
+           data = loaded_data[selectedIndex];
+           var text = "X: "+parseFloat(data[selectedVariable[0]]).toPrecision(2) +", Y: "+parseFloat(data[selectedVariable[1]]).toPrecision(2)+", Z: "+parseFloat(data[selectedVariable[2]]).toPrecision(2);
+           
+           var spritey = makeTextSprite( text, { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
+           spritey.name = "label";
+           spritey.position.set(object.geometry.vertices[selectedIndex].x, object.geometry.vertices[selectedIndex].y, object.geometry.vertices[selectedIndex].z);
+           spritey.scale.set(2,2,1);
+           scatterPlot.add( spritey );
+        
+          controller.userData.selected = object;
+        }
+     }
+
+function onTriggerUp( event ) {
+        console.log("in onTriggerUp");
+        var controller = event.target;
+        if ( controller.userData.selected !== undefined ) {
+          var object = controller.userData.selected;
+       // object.matrix.premultiply( controller.matrixWorld );
+       // object.matrix.decompose( object.position, object.quaternion, object.scale );
+        for( var i = scatterPlot.children.length - 1; i >= 0; i--){
+            obj = scatterPlot.children[i];
+            if (obj.name == "label"){
+              scatterPlot.remove(obj);
+           }
+         }
+          object.geometry.colors[selectedIndex] = {r:1,g:1,b:1};
+          object.geometry.colorsNeedUpdate = true;
+         
+          //group.add( object );
+          controller.userData.selected = undefined;
+        }
+    }
+
+function getIntersections( controller ) {
    
+        tempMatrix.identity().extractRotation( controller.matrixWorld );
+        raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+        raycaster.ray.direction.set( 0, 0, -1 ).applyMatrix4( tempMatrix );
+        raycaster.params.Points.threshold = 0.1;
+       
+       
+        var points;
+
+        for( var i = scatterPlot.children.length - 1; i >= 0; i--){
+            obj = scatterPlot.children[i];
+            if (obj.name == "points"){
+               points = obj;
+               break;
+             }           
+           }
+
+        // console.log(points);
+       
+        return raycaster.intersectObject( points );
+       // return raycaster.intersectObjects(points);
+      }
+
+function intersectObjects( controller ) {
+        // Do not highlight when already selected
+        //console.log("in intersectObjects");
+        if ( controller.userData.selected !== undefined ) return;
+        var line = controller.getObjectByName( 'line' );
+        var intersections = getIntersections( controller );
+
+        if ( intersections.length > 0 ) {
+          var intersection = intersections[ 0 ];
+          var object = intersection.object;
+          
+          intersected.push( object );
+          line.scale.z = intersection.distance;
+        } else {
+          line.scale.z = 5;
+        }
+      }
+
+function cleanIntersected() {
+        while ( intersected.length ) {
+          var object = intersected.pop();
+         
+        }
+      }
+
 
 function createGUI(){
 
@@ -433,19 +602,21 @@ function createGUI(){
             this.EnableVR = function(){
               if(controls.WebVR){
                  dummy = new THREE.Camera();
-                 dummy.position.set(0,13,0);
+                 dummy.position.set(0,10,0);
+  
                  dummy.lookAt(scene_scatterplot.position);
                  scene_scatterplot.add(dummy);
-                 dummy.add(camera_scatterplot)
-                 // camcontrols = new THREE.VRControls(camera_scatterplot);
-                 //  effect = new THREE.VREffect(renderer_scatterplot);
+                 dummy.add(camera_scatterplot);
+                 dummy.add(controller1);
+                 dummy.add(controller2);
+        
                  // if ( WEBVR.isAvailable() === true ) {
 
                   //document.body.appendChild( WEBVR.getButton( effect ) );
-                   renderer_scatterplot.vr.enabled = true;
+                  
                    document.body.appendChild( WEBVR.createButton( renderer_scatterplot) );
-                    renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
-
+                   renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+                  
             
                //  }
 
@@ -563,12 +734,12 @@ function createGUI(){
          
 }
 
- function renderViz(filename, variableX, variableY, variableZ){
+ function renderViz(filename, scatterPlot,  variableX, variableY, variableZ){
  	  var dataPoints = [];
     var prototypeV = [];
     var format = d3.format("+.3f");
-    var scatterPlot = new THREE.Object3D();
-    scatterPlot.name = "scatter";
+  //  var scatterPlot = new THREE.Object3D();
+  //  scatterPlot.name = "scatter";
    
 
     d3.csv(filename, function (irisd) {
@@ -655,6 +826,7 @@ function createGUI(){
     var linebox = new THREE.Line(lineBoxGeo, lineMat);
     linebox.type = THREE.Lines;
     linebox.name = "line";
+
     scatterPlot.add(linebox);
 
     var cubegeo = new THREE.BoxBufferGeometry( 10,10,10 );
@@ -686,7 +858,6 @@ function createGUI(){
     });
 
     
-
     var pointGeo = new THREE.Geometry();
 
     for (var i = 0; i <dataPoints.length; i++) {
@@ -704,11 +875,13 @@ function createGUI(){
 
        
     }
-        
+
         var points = new THREE.Points(pointGeo, material);
      
         points.name = "points"
         scatterPlot.add(points);
+     
+
         var axes = new THREE.AxesHelper(12);
         axes.position.set(-5,-5,-5)
         var xlabel = makeTextSprite( "X "+ selectedVariable[0], { fontsize: 50, textColor:{r:255, g:0, b:0, a:1}, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
@@ -785,12 +958,12 @@ function createGUI(){
   var rayMaterial = new  THREE.LineBasicMaterial({
 
     color:0xff0000,
-    linewidth: 20,
+    linewidth: 1,
     transparent: true,
     opacity:0.5
   });
 
-  var rayDistance = 1;
+  var rayDistance = 1000;
   var isPointing = false;
   var isHit = false;
   
@@ -851,7 +1024,7 @@ function createGUI(){
 	          case "circle":
 	              console.log("Circle Gesture");
 	              if(!CheckAllFingerExtended(frame) ){
-	                 isPointing = false;
+	                 isPointing = true;
 	                }
 	              break;
 	          case "keyTap":
@@ -865,7 +1038,7 @@ function createGUI(){
 	              break;
 	          case "swipe":
 	              console.log("Swipe Gesture");
-	              isPointing = true;
+	              isPointing = false;
 	              break;
 	        }
 	    });
@@ -876,8 +1049,9 @@ function createGUI(){
       for (var i = 0; i < frame.hands.length; i++){
 
         hand = frame.hands[i];
-
-        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand, rayDistance, rayMaterial, scene_scatterplot);
+     
+        
+        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand.indexFinger, rayDistance, rayMaterial, scene_scatterplot);
         
 
        }
@@ -885,6 +1059,7 @@ function createGUI(){
           
 
           var ray_caster = rayCasterManager.rays[rayName];
+           ray_caster.params.Points.threshold = 0.1;
           var intersect = ray_caster.intersectObject(points)[0];
          
 
@@ -916,7 +1091,7 @@ function createGUI(){
              // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
               
-              spritey.position.set((-0.5)*positiondata.x, 10,(-0.5)*positiondata.z);
+              spritey.position.set(positiondata.x, positiondata.y, (-1)*positiondata.z);
              
               spritey.scale.set(2,2,1);
               scene_scatterplot.add( spritey );
@@ -969,6 +1144,11 @@ function createGUI(){
   function animate() {
 
          keyboard.update();
+         controller1.update();
+         controller2.update();
+         cleanIntersected();
+        intersectObjects( controller1 );
+        intersectObjects( controller2 );
          updatePosition(IsRotating);
          
          resize();

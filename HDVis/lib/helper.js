@@ -115,6 +115,7 @@ function createRayByFinger(rayCaster,finger,distance,material){
 	var dip_dir = new THREE.Vector3().fromArray(finger.direction);
 
 	rayCaster.set(dip_pos, dip_dir);
+	
 
 	return createRayMesh(dip_pos, dip_dir, distance, material);
 
@@ -146,7 +147,7 @@ RayCasterManager.prototype.addRayCaster = function (rayName){
 
 }
 
-RayCasterManager.prototype.createRayCasterByFinger = function (rayName, hand, distance, material, scene){
+RayCasterManager.prototype.createRayCasterByFinger = function (rayName, finger, distance, material, scene){
 
    // console.log(hand);
 	var rayCaster = this.addRayCaster(rayName);
@@ -154,8 +155,8 @@ RayCasterManager.prototype.createRayCasterByFinger = function (rayName, hand, di
 	if (scene) scene.remove(rayCaster.mesh);
 
 
-	var tip_pos = new THREE.Vector3().fromArray(hand.palmPosition);
-	var tip_dir = new THREE.Vector3().fromArray(hand.direction);
+	var tip_pos = new THREE.Vector3().fromArray(finger.tipPosition);
+	var tip_dir = new THREE.Vector3().fromArray(finger.direction);
 
 
 	rayCaster.set(tip_pos, tip_dir);
