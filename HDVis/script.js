@@ -952,171 +952,171 @@ function createGUI(){
 
 // ADD LEAP MOTION
 
-  //rays
-  var rayCasterManager = new RayCasterManager();
+ //  //rays
+ //  var rayCasterManager = new RayCasterManager();
 
-  var rayMaterial = new  THREE.LineBasicMaterial({
+ //  var rayMaterial = new  THREE.LineBasicMaterial({
 
-    color:0xff0000,
-    linewidth: 1,
-    transparent: true,
-    opacity:0.5
-  });
+ //    color:0xff0000,
+ //    linewidth: 1,
+ //    transparent: true,
+ //    opacity:0.5
+ //  });
 
-  var rayDistance = 1000;
-  var isPointing = false;
-  var isHit = false;
+ //  var rayDistance = 1000;
+ //  var isPointing = false;
+ //  var isHit = false;
   
-  // Connect to localhost and start getting frames
-  var controller = Leap.loop({enableGestures:true}, function(frame){
-   // console.log(frame);
-    if( frame.hands.length>1&&frame.hands[0].middleFinger.extended&&frame.hands[0].indexFinger.extended){
+ //  // Connect to localhost and start getting frames
+ //  var controller = Leap.loop({enableGestures:true}, function(frame){
+ //   // console.log(frame);
+ //    if( frame.hands.length>1&&frame.hands[0].middleFinger.extended&&frame.hands[0].indexFinger.extended){
 
-            // console.log(frame.hands[0].palmVelocity);
-            // console.log(frame.hands[1].palmVelocity);
+ //            // console.log(frame.hands[0].palmVelocity);
+ //            // console.log(frame.hands[1].palmVelocity);
 
-            if(Math.abs(frame.hands[0].palmVelocity[2])>100||Math.abs(frame.hands[1].palmVelocity[2])>100){
-              scatterPlot.rotation.z += (frame.hands[0].roll()+frame.hands[1].roll())/15;
-              }
+ //            if(Math.abs(frame.hands[0].palmVelocity[2])>100||Math.abs(frame.hands[1].palmVelocity[2])>100){
+ //              scatterPlot.rotation.z += (frame.hands[0].roll()+frame.hands[1].roll())/15;
+ //              }
             
-             if(frame.hands[0].palmVelocity[1]>200 && frame.hands[1].palmVelocity[1]>200){
-              scatterPlot.position.y +=0.5;
-              }
-             if(frame.hands[0].palmVelocity[1]<-200 && frame.hands[1].palmVelocity[1]<-200){
-              scatterPlot.position.y -=0.5;
-              }
-            }
+ //             if(frame.hands[0].palmVelocity[1]>200 && frame.hands[1].palmVelocity[1]>200){
+ //              scatterPlot.position.y +=0.5;
+ //              }
+ //             if(frame.hands[0].palmVelocity[1]<-200 && frame.hands[1].palmVelocity[1]<-200){
+ //              scatterPlot.position.y -=0.5;
+ //              }
+ //            }
 
-    renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+ //    renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
    
               
-    $("#pointresult").css("background-color","black");
+ //    $("#pointresult").css("background-color","black");
     
-    rayCasterManager.removeAllRays(scene_scatterplot);
-    $("#pointresult").html("");
+ //    rayCasterManager.removeAllRays(scene_scatterplot);
+ //    $("#pointresult").html("");
      
-      var hslcolor_min = new THREE.Color(PColor.min).getHSL();
-      var hslcolor_max = new THREE.Color(PColor.max).getHSL();
-      var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
-      var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
+ //      var hslcolor_min = new THREE.Color(PColor.min).getHSL();
+ //      var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+ //      var data_z_min = d3.min(loaded_data,function(d){return +d[selectedVariable[2]]});
+ //      var data_z_max = d3.max(loaded_data,function(d){return +d[selectedVariable[2]]});
         
-    for (var i = 0; i<pointGeo.colors.length; i++){
-      //  // pointGeo.colors[i] = new THREE.Color().setRGB(1,1,1);
-        var data_z = loaded_data[i][selectedVariable[2]];
-        var newhue = hslcolor_min.h+data_z*((hslcolor_max.h - hslcolor_min.h)/(data_z_max-data_z_min));
-        pointGeo.colors[i] = new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l); 
-     }
+ //    for (var i = 0; i<pointGeo.colors.length; i++){
+ //      //  // pointGeo.colors[i] = new THREE.Color().setRGB(1,1,1);
+ //        var data_z = loaded_data[i][selectedVariable[2]];
+ //        var newhue = hslcolor_min.h+data_z*((hslcolor_max.h - hslcolor_min.h)/(data_z_max-data_z_min));
+ //        pointGeo.colors[i] = new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l); 
+ //     }
 
-    for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
-        obj = scene_scatterplot.children[i];
-        if (obj.name == "label"||obj.name=="rayline")
-           scene_scatterplot.remove(obj);
+ //    for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
+ //        obj = scene_scatterplot.children[i];
+ //        if (obj.name == "label"||obj.name=="rayline")
+ //           scene_scatterplot.remove(obj);
 
-     }
-    scene_scatterplot.updateMatrixWorld();
+ //     }
+ //    scene_scatterplot.updateMatrixWorld();
     
 
  
 
-    if(frame.valid && frame.gestures.length > 0){
-	    frame.gestures.forEach(function(gesture){
-	        switch (gesture.type){
-	          case "circle":
-	              console.log("Circle Gesture");
-	              if(!CheckAllFingerExtended(frame) ){
-	                 isPointing = true;
-	                }
-	              break;
-	          case "keyTap":
-	              console.log("Key Tap Gesture");
-	              isPointing = false;
-	              break;
+ //    if(frame.valid && frame.gestures.length > 0){
+	//     frame.gestures.forEach(function(gesture){
+	//         switch (gesture.type){
+	//           case "circle":
+	//               console.log("Circle Gesture");
+	//               if(!CheckAllFingerExtended(frame) ){
+	//                  isPointing = true;
+	//                 }
+	//               break;
+	//           case "keyTap":
+	//               console.log("Key Tap Gesture");
+	//               isPointing = false;
+	//               break;
 
-	          case "screenTap":
-	              console.log("Screen Tap Gesture");
-	              isPointing = false;
-	              break;
-	          case "swipe":
-	              console.log("Swipe Gesture");
-	              isPointing = false;
-	              break;
-	        }
-	    });
-  }
+	//           case "screenTap":
+	//               console.log("Screen Tap Gesture");
+	//               isPointing = false;
+	//               break;
+	//           case "swipe":
+	//               console.log("Swipe Gesture");
+	//               isPointing = false;
+	//               break;
+	//         }
+	//     });
+ //  }
 
-    if(isPointing){
-      var hand;
-      for (var i = 0; i < frame.hands.length; i++){
+ //    if(isPointing){
+ //      var hand;
+ //      for (var i = 0; i < frame.hands.length; i++){
 
-        hand = frame.hands[i];
+ //        hand = frame.hands[i];
      
         
-        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand.indexFinger, rayDistance, rayMaterial, scene_scatterplot);
+ //        rayCasterManager.createRayCasterByFinger(hand.type+i+'index', hand.indexFinger, rayDistance, rayMaterial, scene_scatterplot);
         
 
-       }
-      for ( var rayName in rayCasterManager.rays){
+ //       }
+ //      for ( var rayName in rayCasterManager.rays){
           
 
-          var ray_caster = rayCasterManager.rays[rayName];
-           ray_caster.params.Points.threshold = 0.1;
-          var intersect = ray_caster.intersectObject(points)[0];
+ //          var ray_caster = rayCasterManager.rays[rayName];
+ //           ray_caster.params.Points.threshold = 0.1;
+ //          var intersect = ray_caster.intersectObject(points)[0];
          
 
-          if (intersect){
-            // console.log(intersect);      
-            isHit = true ;
+ //          if (intersect){
+ //            // console.log(intersect);      
+ //            isHit = true ;
 
-          }
+ //          }
 
-          if(isHit == true && typeof intersect !== 'undefined'){
+ //          if(isHit == true && typeof intersect !== 'undefined'){
            
-            var positiondata = pointGeo.vertices[intersect.index];
-            var hitdata = dataPoints[intersect.index];
-            pointGeo.colors[intersect.index].setRGB(1,0,0);
-            pointGeo.colorsNeedUpdate = true;
+ //            var positiondata = pointGeo.vertices[intersect.index];
+ //            var hitdata = dataPoints[intersect.index];
+ //            pointGeo.colors[intersect.index].setRGB(1,0,0);
+ //            pointGeo.colorsNeedUpdate = true;
            
            
-            // var geometry = new THREE.Geometry();
-            // var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
-            // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
-            // geometry.vertices.push(tip_pos,data_pos);
-            // var rayline = new THREE.Line(geometry,rayMaterial);
-            // rayline.name = "rayline";
-            // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
-            var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
-            $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
-              var spritey = makeTextSprite( text, { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
-              spritey.name = "label";
-             // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
+ //            // var geometry = new THREE.Geometry();
+ //            // var tip_pos = new THREE.Vector3().fromArray(hand.indexFinger.tipPosition);
+ //            // var data_pos = new THREE.Vector3((-1)*positiondata.x, positiondata.y, (-1)*positiondata.z);
+ //            // geometry.vertices.push(tip_pos,data_pos);
+ //            // var rayline = new THREE.Line(geometry,rayMaterial);
+ //            // rayline.name = "rayline";
+ //            // var text = selectedVariable[0]+":"+hitdata.x.toPrecision(2) +","+selectedVariable[1]+":"+hitdata.y.toPrecision(2)+","+selectedVariable[2]+":"+hitdata.z.toPrecision(2)
+ //            var text = "X: "+hitdata.x.toPrecision(2) +", Y: "+hitdata.y.toPrecision(2)+", Z: "+hitdata.z.toPrecision(2)
+ //            $("#pointresult").html("x:&nbsp;"+hitdata.x.toPrecision(2)+"&nbsp;y:&nbsp;"+hitdata.y.toPrecision(2)+"&nbsp;z:&nbsp;"+hitdata.z.toPrecision(2));
+ //              var spritey = makeTextSprite( text, { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:0, g:0, b:0, a:1.0} } );
+ //              spritey.name = "label";
+ //             // spritey.position.set((-1)*positiondata.x, positiondata.y,(-1)*positiondata.z);
              
               
-              spritey.position.set(positiondata.x, positiondata.y, (-1)*positiondata.z);
+ //              spritey.position.set(positiondata.x, positiondata.y, (-1)*positiondata.z);
              
-              spritey.scale.set(2,2,1);
-              scene_scatterplot.add( spritey );
-              //scene_scatterplot.add(rayline);
+ //              spritey.scale.set(2,2,1);
+ //              scene_scatterplot.add( spritey );
+ //              //scene_scatterplot.add(rayline);
         
             
-          } 
+ //          } 
 
-        }
-    }
+ //        }
+ //    }
     
-  })
- .use('transform', {
-    // This matrix flips the x, y, and z axis, scales to meters, and offsets the hands by -8cm.
-    vr: true,
-    effectiveParent: camera_scatterplot
+ //  })
+ // .use('transform', {
+ //    // This matrix flips the x, y, and z axis, scales to meters, and offsets the hands by -8cm.
+ //    vr: true,
+ //    effectiveParent: camera_scatterplot
 
-  })
- .use('boneHand', {
-    targetEl: element,
-    arm: true,
-    scene: scene_scatterplot,
-    opacity: 1
+ //  })
+ // .use('boneHand', {
+ //    targetEl: element,
+ //    arm: true,
+ //    scene: scene_scatterplot,
+ //    opacity: 1
 
-  });
+ //  });
 
 
   function updatePosition(rotation){
