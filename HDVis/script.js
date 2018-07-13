@@ -1,15 +1,15 @@
-	var selectedVariable = ["","",""];
-  var PColor = {min:"#FFFFFF", max:"#FFFFFF"};
-  var IsRotating = false;
-  var HasGrid = true;
-  var loaded_data = [];
-  var controller1, controller2;
-  var raycaster, intersected = [];
-  var tempMatrix = new THREE.Matrix4();
-  var scatterPlot = new THREE.Object3D();
-      scatterPlot.name = "scatter";
-  var selectedIndex ;
-  var group;
+var selectedVariable = ["","",""];
+var PColor = {min:"#FFFFFF", max:"#FFFFFF"};
+var IsRotating = false;
+var HasGrid = true;
+var loaded_data = [];
+var controller1, controller2;
+var raycaster, intersected = [];
+var tempMatrix = new THREE.Matrix4();
+var scatterPlot = new THREE.Object3D();
+    scatterPlot.name = "scatter";
+var selectedIndex ;
+var group;
 
 function LoadFiles(files) {
 		var file = files[0];
@@ -239,99 +239,96 @@ $( document ).ready(function(){
    }); 
 
 
-    // one renderer
+// one renderer
 
-    var renderer_scatterplot = new THREE.WebGLRenderer();
-        renderer_scatterplot.vr.enabled = true;
-    
-    var element = renderer_scatterplot.domElement;
-    var container = document.getElementById('3dscatterplot');
-        container.appendChild(element);
-    
-    
-    // effect = new THREE.StereoEffect(renderer_scatterplot);
-    // effect.separation = 3;
-    // effect.focalLength = 15;
-    
+var renderer_scatterplot = new THREE.WebGLRenderer();
+    renderer_scatterplot.vr.enabled = true;
+
+var element = renderer_scatterplot.domElement;
+var container = document.getElementById('3dscatterplot');
+    container.appendChild(element);
 
 
-   // renderer_scatterplot.setClearColor(0x000000, 1.0);
-   // one scene
-   var scene_scatterplot = new THREE.Scene();
+// effect = new THREE.StereoEffect(renderer_scatterplot);
+// effect.separation = 3;
+// effect.focalLength = 15;
     
+
+
+// renderer_scatterplot.setClearColor(0x000000, 1.0);
+// one scene
+var scene_scatterplot = new THREE.Scene();
+
    
-   var camera_scatterplot = new THREE.PerspectiveCamera(90, window.innerWidth/ window.innerHeight, 0.001, 1000);
-       camera_scatterplot.position.set(0,15,0);
-   //camera_scatterplot.position.z = 200;
+var camera_scatterplot = new THREE.PerspectiveCamera(90, window.innerWidth/ window.innerHeight, 0.001, 1000);
+   camera_scatterplot.position.set(0,15,0);
+//camera_scatterplot.position.z = 200;
 
-   scene_scatterplot.add(camera_scatterplot);
+scene_scatterplot.add(camera_scatterplot);
 
-  
-   var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
-       camcontrols.noPan = true;
-       camcontrols.noZoom = false;
-       element.addEventListener('click', fullscreen, false);
-   var light = new THREE.PointLight(0xffffff, 1, 1000);
-       light.position.set(0,50,0);
-       scene_scatterplot.add(light);
-   var keyboard = new KeyboardState();
+
+var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
+   camcontrols.noPan = true;
+   camcontrols.noZoom = false;
+   element.addEventListener('click', fullscreen, false);
+var light = new THREE.PointLight(0xffffff, 1, 1000);
+   light.position.set(0,50,0);
+   scene_scatterplot.add(light);
+var keyboard = new KeyboardState();
    group = new THREE.Group();
-        scene_scatterplot.add( group );
+   scene_scatterplot.add( group );
 
+// Add Hand controller
+  controller1 = new THREE.ViveController( 0 );
+  controller1.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
+  controller1.addEventListener( 'triggerdown', onTriggerDown );
+  controller1.addEventListener( 'triggerup', onTriggerUp );
+  controller1.addEventListener('gripsdown',onGripsDown );
+  controller1.addEventListener('menudown',onMenuDown );
+  scene_scatterplot.add( controller1 );
 
-   // Add Hand controller
-        controller1 = new THREE.ViveController( 0 );
-        controller1.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
-        controller1.addEventListener( 'triggerdown', onTriggerDown );
-        controller1.addEventListener( 'triggerup', onTriggerUp );
-        controller1.addEventListener('gripsdown',onGripsDown );
-        controller1.addEventListener('menudown',onMenuDown );
-        scene_scatterplot.add( controller1 );
+  controller2 = new THREE.ViveController( 1 );
+  controller2.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
+  controller2.addEventListener( 'triggerdown', onTriggerDown );
+  controller2.addEventListener( 'triggerup', onTriggerUp );
+  controller2.addEventListener('gripsdown',onGripsDown );
+  controller2.addEventListener('menudown',onMenuDown );
+  scene_scatterplot.add( controller2 );
 
-        controller2 = new THREE.ViveController( 1 );
-        controller2.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
-        controller2.addEventListener( 'triggerdown', onTriggerDown );
-        controller2.addEventListener( 'triggerup', onTriggerUp );
-        controller2.addEventListener('gripsdown',onGripsDown );
-        controller2.addEventListener('menudown',onMenuDown );
-        scene_scatterplot.add( controller2 );
+var meshColorOff = 0x888888;
+var meshColorOn  = 0xcccccc;
 
-    var meshColorOff = 0x888888;
-    var meshColorOn  = 0xcccccc;
+var controllerMaterial = new THREE.MeshStandardMaterial({
+      color: meshColorOff
+  });
+var controllerMesh = new THREE.Mesh(
+      new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
+      controllerMaterial
+  );
+var handleMesh = new THREE.Mesh(
+      new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
+      controllerMaterial
+  );
 
-    var controllerMaterial = new THREE.MeshStandardMaterial({
-            color: meshColorOff
-        });
-    var controllerMesh = new THREE.Mesh(
-            new THREE.CylinderGeometry( 0.005, 0.05, 0.1, 6 ),
-            controllerMaterial
-        );
-    var handleMesh = new THREE.Mesh(
-            new THREE.BoxGeometry( 0.03, 0.1, 0.03 ),
-            controllerMaterial
-        );
-
-        controllerMaterial.flatShading = true;
-        controllerMesh.rotation.x = -Math.PI / 2;
-        handleMesh.position.y = -0.05;
-        controllerMesh.add( handleMesh );
-        controller1.userData.mesh =  controllerMesh;
-        controller2.userData.mesh = controllerMesh;
-        controller1.add(controllerMesh.clone());
-        controller2.add(controllerMesh.clone());
+  controllerMaterial.flatShading = true;
+  controllerMesh.rotation.x = -Math.PI / 2;
+  handleMesh.position.y = -0.05;
+  controllerMesh.add( handleMesh );
+  controller1.userData.mesh =  controllerMesh;
+  controller2.userData.mesh = controllerMesh;
+  controller1.add(controllerMesh.clone());
+  controller2.add(controllerMesh.clone());
     //console.log(scene_scatterplot);    
 
 // End of Hand controller 
 // adding lines to both controllers
 var geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
-        
-        
-        var line = new THREE.Line( geometry );
-        line.name = 'line';
-        line.scale.z = 5;
-        controller1.add( line.clone() );
-        controller2.add( line.clone() );
-        raycaster = new THREE.Raycaster();
+var line = new THREE.Line( geometry );
+  line.name = 'line';
+  line.scale.z = 5;
+  controller1.add( line.clone() );
+  controller2.add( line.clone() );
+  raycaster = new THREE.Raycaster();
 
 
 function resize() {
@@ -734,7 +731,7 @@ function createGUI(){
          
 }
 
- function renderViz(filename, scatterPlot,  variableX, variableY, variableZ){
+function renderViz(filename, scatterPlot,  variableX, variableY, variableZ){
  	  var dataPoints = [];
     var prototypeV = [];
     var format = d3.format("+.3f");
@@ -761,120 +758,103 @@ function createGUI(){
 
     
    
-    var xExent = d3.extent(dataPoints, function (d) {return d.x; }),
-        yExent = d3.extent(dataPoints, function (d) {return d.y; }),
-        zExent = d3.extent(dataPoints, function (d) {return d.z; });
+        var xExent = d3.extent(dataPoints, function (d) {return d.x; }),
+            yExent = d3.extent(dataPoints, function (d) {return d.y; }),
+            zExent = d3.extent(dataPoints, function (d) {return d.z; });
 
    
 
-    var vpts = {
-        xMax: xExent[1],
-        xCen: (xExent[1] + xExent[0]) / 2,
-        xMin: xExent[0],
-        yMax: yExent[1],
-        yCen: (yExent[1] + yExent[0]) / 2,
-        yMin: yExent[0],
-        zMax: zExent[1],
-        zCen: (zExent[1] + zExent[0]) / 2,
-        zMin: zExent[0]
-    }
+        var vpts = {
+            xMax: xExent[1],
+            xCen: (xExent[1] + xExent[0]) / 2,
+            xMin: xExent[0],
+            yMax: yExent[1],
+            yCen: (yExent[1] + yExent[0]) / 2,
+            yMin: yExent[0],
+            zMax: zExent[1],
+            zCen: (zExent[1] + zExent[0]) / 2,
+            zMin: zExent[0]
+        }
 
     
-    var xScale = d3.scale.linear()
-                  .domain(xExent)
-                  .range([-5,5]);
-    var yScale = d3.scale.linear()
-                  .domain(yExent)
-                  .range([-5,5]);                  
-    var zScale = d3.scale.linear()
-                  .domain(zExent)
-                  .range([-5,5]);
+        var xScale = d3.scale.linear()
+                      .domain(xExent)
+                      .range([-5,5]);
+        var yScale = d3.scale.linear()
+                      .domain(yExent)
+                      .range([-5,5]);                  
+        var zScale = d3.scale.linear()
+                      .domain(zExent)
+                      .range([-5,5]);
 
-    var lineBoxGeo = new THREE.Geometry();
-    lineBoxGeo.vertices.push(
+        var lineBoxGeo = new THREE.Geometry();
+          lineBoxGeo.vertices.push(
+              
         
+                v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)), v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)),
+                v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)), v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
+                v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax))
+               
+        
+          );
 
-        // v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)),
-         
-         //v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMin)), v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)),
-         //v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)), v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
-         //v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)),
-         //v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMin)),
+        var lineMat = new THREE.LineBasicMaterial({
+            color: 0xEEEEEE,
+            linewidth: 1,
+            opacity:0.5,
+            transparent:true
+        });
+        var linebox = new THREE.Line(lineBoxGeo, lineMat);
+        linebox.type = THREE.Lines;
+        linebox.name = "line";
 
-         // v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMin)), v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)),
-         // v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)), v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMin)),
-         // v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMin)), v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)),
-         // v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)), v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
-         // v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)),
-          v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)),
-          v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)), v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)),
-          v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)), v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
-          v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)), v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax))
-         
+        scatterPlot.add(linebox);
 
-    
-
-
-  
-    );
-    var lineMat = new THREE.LineBasicMaterial({
-        color: 0xEEEEEE,
-        linewidth: 1,
-        opacity:0.5,
-        transparent:true
-    });
-    var linebox = new THREE.Line(lineBoxGeo, lineMat);
-    linebox.type = THREE.Lines;
-    linebox.name = "line";
-
-    scatterPlot.add(linebox);
-
-    var cubegeo = new THREE.BoxBufferGeometry( 10,10,10 );
-    var gridwhitetexture = new THREE.TextureLoader().load("texture/whitegrid.png");
-    var gridblacktexture = new THREE.TextureLoader().load("texture/blackgrid.png");
-    gridwhitetexture.minFilter = THREE.LinearFilter;
-    gridblacktexture.minFilter = THREE.LinearFilter;
-    var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
-    var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
-    var cube = new THREE.Mesh( cubegeo, [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
-    cube.name = "cube"  
-    scatterPlot.add(cube);
-    
-    var texture = new THREE.TextureLoader().load("texture/ball.png")
-    texture.minFilter = THREE.LinearFilter;
-   
-   var material = new THREE.PointsMaterial({
-        size:0.15,
-        map:texture,
-        alphaTest: 0.15,
-        opacity: 0.35,
-        transparent: true,
-        vertexColors: THREE.VertexColors,
-       // vertexColors: THREE.NoColors,
-        color: new THREE.Color(PColor.min),
-        depthTest:false
-    
-
-    });
-
-    
-    var pointGeo = new THREE.Geometry();
-
-    for (var i = 0; i <dataPoints.length; i++) {
-        var x = xScale(dataPoints[i].x);
-        var y = yScale(dataPoints[i].y);
-        var z = zScale(dataPoints[i].z);
-       
+        var cubegeo = new THREE.BoxBufferGeometry( 10,10,10 );
+        var gridwhitetexture = new THREE.TextureLoader().load("texture/whitegrid.png");
+        var gridblacktexture = new THREE.TextureLoader().load("texture/blackgrid.png");
+        gridwhitetexture.minFilter = THREE.LinearFilter;
+        gridblacktexture.minFilter = THREE.LinearFilter;
+        var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
+        var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
+        var cube = new THREE.Mesh( cubegeo, [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
+        cube.name = "cube"  
+        scatterPlot.add(cube);
+        
+        var texture = new THREE.TextureLoader().load("texture/ball.png")
+        texture.minFilter = THREE.LinearFilter;
      
-       var hslcolor_min = new THREE.Color(PColor.min).getHSL();
-       var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+        var material = new THREE.PointsMaterial({
+            size:0.15,
+            map:texture,
+            alphaTest: 0.15,
+            opacity: 0.35,
+            transparent: true,
+            vertexColors: THREE.VertexColors,
+           // vertexColors: THREE.NoColors,
+            color: new THREE.Color(PColor.min),
+            depthTest:false
         
-        pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-        var newhue = hslcolor_min.h+dataPoints[i].z*(hslcolor_max.h - hslcolor_min.h);
-        pointGeo.colors.push(new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l)); 
 
-       
-    }
+        });
+
+    
+        var pointGeo = new THREE.Geometry();
+
+        for (var i = 0; i <dataPoints.length; i++) {
+              var x = xScale(dataPoints[i].x);
+              var y = yScale(dataPoints[i].y);
+              var z = zScale(dataPoints[i].z);
+             
+           
+              var hslcolor_min = new THREE.Color(PColor.min).getHSL();
+              var hslcolor_max = new THREE.Color(PColor.max).getHSL();
+              
+              pointGeo.vertices.push(new THREE.Vector3(x, y, z));
+              var newhue = hslcolor_min.h+dataPoints[i].z*(hslcolor_max.h - hslcolor_min.h);
+              pointGeo.colors.push(new THREE.Color().setHSL(newhue, hslcolor_min.s, hslcolor_min.l)); 
+   
+        }
 
         var points = new THREE.Points(pointGeo, material);
      
@@ -901,37 +881,38 @@ function createGUI(){
         scatterPlot.add(zlabel);
         scatterPlot.add(origin);   
         scatterPlot.add(axes);
-       if(!isNaN(vpts.xCen) && !isNaN(vpts.yCen) && !isNaN(vpts.zCen)){
-          var xmid =  makeTextSprite( vpts.xCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
-          xmid.position.set(0.5,-5,-5.5);
-          xmid.scale.set(1,1,1);
-          var ymid =  makeTextSprite( vpts.yCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
-          ymid.position.set(-5,0.5,-5.5);
-          ymid.scale.set(1,1,1);
-          var zmid =  makeTextSprite( vpts.zCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
-          zmid.position.set(-5,-5, 0.5);
-          zmid.scale.set(1,1,1);
+        if(!isNaN(vpts.xCen) && !isNaN(vpts.yCen) && !isNaN(vpts.zCen)){
 
-          var xmax =  makeTextSprite( vpts.xMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
-          xmax.position.set(5.5,-5,-5.5);
-          xmax.scale.set(1,1,1);
-          var ymax =  makeTextSprite( vpts.yMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
-          ymax.position.set(-5,5.5,-5.5);
-          ymax.scale.set(1,1,1);
-          var zmax =  makeTextSprite( vpts.zMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
-          zmax.position.set(-5,-5, 5);
-          zmax.scale.set(1,1,1);
+            var xmid =  makeTextSprite( vpts.xCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+            xmid.position.set(0.5,-5,-5.5);
+            xmid.scale.set(1,1,1);
+            var ymid =  makeTextSprite( vpts.yCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+            ymid.position.set(-5,0.5,-5.5);
+            ymid.scale.set(1,1,1);
+            var zmid =  makeTextSprite( vpts.zCen.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+            zmid.position.set(-5,-5, 0.5);
+            zmid.scale.set(1,1,1);
 
-          scatterPlot.add(xmid);
-          scatterPlot.add(ymid);
-          scatterPlot.add(zmid);
+            var xmax =  makeTextSprite( vpts.xMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+            xmax.position.set(5.5,-5,-5.5);
+            xmax.scale.set(1,1,1);
+            var ymax =  makeTextSprite( vpts.yMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+            ymax.position.set(-5,5.5,-5.5);
+            ymax.scale.set(1,1,1);
+            var zmax =  makeTextSprite( vpts.zMax.toFixed(2), { fontsize: 40, borderColor: {r:0, g:0, b:0, a:0}, backgroundColor: {r:0, g:0, b:0, a:0}} );
+            zmax.position.set(-5,-5, 5);
+            zmax.scale.set(1,1,1);
 
-          scatterPlot.add(xmax);
-          scatterPlot.add(ymax);
-          scatterPlot.add(zmax);
-        
-        
-       }
+            scatterPlot.add(xmid);
+            scatterPlot.add(ymid);
+            scatterPlot.add(zmid);
+
+            scatterPlot.add(xmax);
+            scatterPlot.add(ymax);
+            scatterPlot.add(zmax);
+          
+          
+         }
      
 
   
@@ -948,9 +929,9 @@ function createGUI(){
 
       
   
-    var current = new Date().getTime();
+        var current = new Date().getTime();
 
-// ADD LEAP MOTION
+ // ADD LEAP MOTION
 
  //  //rays
  //  var rayCasterManager = new RayCasterManager();
@@ -1119,65 +1100,66 @@ function createGUI(){
  //  });
 
 
-  function updatePosition(rotation){
+        function updatePosition(rotation){
 
-     
-        var rotationDegree = 0;
+           
+              var rotationDegree = 0;
 
-        if(rotation){
-            rotationDegree = 0.001;        
-          }
-         scatterPlot.rotation.z+=rotationDegree;
-         
-        if(typeof effect !== 'undefined'){
-           effect.render(scene_scatterplot, camera_scatterplot);
+              if(rotation){
+                  rotationDegree = 0.001;        
+                }
+               scatterPlot.rotation.z+=rotationDegree;
+               
+              if(typeof effect !== 'undefined'){
+                 effect.render(scene_scatterplot, camera_scatterplot);
+                 
+                }
+               else{
+                 renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+                 
+                }
+                
+              
+          };
            
-          }
-         else{
-           renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
-           
-          }
+        function animate() {
+
+               keyboard.update();
+               controller1.update();
+               controller2.update();
+               cleanIntersected();
+               intersectObjects( controller1 );
+               intersectObjects( controller2 );
+               updatePosition(IsRotating);
+               
+               resize();
+               camera_scatterplot.updateProjectionMatrix();
+
+               camcontrols.update(clock.getDelta());
+
+               if(keyboard.pressed("R")){
+                camera_scatterplot.position.set(0,15,0);
+                scatterPlot.position.set(0,0,0);
+                scatterPlot.rotation.set(Math.PI, 0, 0);
+
+               }
+
+               if(typeof effect !== 'undefined'){
+                   effect.render(scene_scatterplot, camera_scatterplot);
+                   
+                }
+                else{
+                   renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+                   
+                }
+              
+                window.requestAnimationFrame(animate);
           
-        
-    };
-   
-  function animate() {
-
-         keyboard.update();
-         controller1.update();
-         controller2.update();
-         cleanIntersected();
-        intersectObjects( controller1 );
-        intersectObjects( controller2 );
-         updatePosition(IsRotating);
-         
-         resize();
-         camera_scatterplot.updateProjectionMatrix();
-
-         camcontrols.update(clock.getDelta());
-
-         if(keyboard.pressed("R")){
-          camera_scatterplot.position.set(0,15,0);
-          scatterPlot.position.set(0,0,0);
-          scatterPlot.rotation.set(Math.PI, 0, 0);
-
-         }
-
-         if(typeof effect !== 'undefined'){
-             effect.render(scene_scatterplot, camera_scatterplot);
-             
-          }
-          else{
-             renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
-             
-          }
-        
-          window.requestAnimationFrame(animate);
-    };
+          };
 
 
 
-  });// end reading data csv
+    });// end reading data csv
     
 
 } //end of renderVisualisation();
