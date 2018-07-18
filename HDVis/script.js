@@ -242,7 +242,7 @@ $( document ).ready(function(){
 // one renderer
 
 var renderer_scatterplot = new THREE.WebGLRenderer();
-    renderer_scatterplot.vr.enabled = true;
+    renderer_scatterplot.vr.enabled = false;
 
 var element = renderer_scatterplot.domElement;
 var container = document.getElementById('3dscatterplot');
@@ -607,16 +607,14 @@ function createGUI(){
                  dummy.add(controller1);
                  dummy.add(controller2);
         
-                 // if ( WEBVR.isAvailable() === true ) {
-
-                  //document.body.appendChild( WEBVR.getButton( effect ) );
-                  
-                   document.body.appendChild( WEBVR.createButton( renderer_scatterplot) );
-                   renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+                
+                 renderer_scatterplot.vr.enabled = true;
+                 document.body.appendChild( WEBVR.createButton( renderer_scatterplot) );
+                 renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
+                
                   
             
-               //  }
-
+      
               }
               else{
                
@@ -1131,11 +1129,16 @@ function renderViz(filename, scatterPlot,  variableX, variableY, variableZ){
                intersectObjects( controller1 );
                intersectObjects( controller2 );
                updatePosition(IsRotating);
-               
-               resize();
-               camera_scatterplot.updateProjectionMatrix();
 
-               camcontrols.update(clock.getDelta());
+               if( renderer_scatterplot.vr.enabled == false){
+
+                  resize();
+                  camera_scatterplot.updateProjectionMatrix();
+                  camcontrols.update(clock.getDelta());
+
+               }
+               
+               
 
                if(keyboard.pressed("R")){
                 camera_scatterplot.position.set(0,15,0);
