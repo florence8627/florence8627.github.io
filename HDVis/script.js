@@ -607,7 +607,8 @@ function createGUI(){
                  dummy.add(controller1);
                  dummy.add(controller2);
         
-                
+                 renderer_scatterplot.setPixelRatio( window.devicePixelRatio );
+                 renderer_scatterplot.setSize( window.innerWidth, window.innerHeight );
                  renderer_scatterplot.vr.enabled = true;
                  document.body.appendChild( WEBVR.createButton( renderer_scatterplot) );
                  renderer_scatterplot.render(scene_scatterplot, camera_scatterplot);
