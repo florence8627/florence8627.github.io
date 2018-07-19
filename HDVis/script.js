@@ -241,7 +241,7 @@ $( document ).ready(function(){
 
 // one renderer
 
-var renderer_scatterplot = new THREE.WebGLRenderer();
+var renderer_scatterplot = new THREE.WebGLRenderer({ antialias: true });
     renderer_scatterplot.vr.enabled = false;
 
 var element = renderer_scatterplot.domElement;
@@ -270,7 +270,7 @@ scene_scatterplot.add(camera_scatterplot);
 var camcontrols = new THREE.OrbitControls(camera_scatterplot, element);
    camcontrols.noPan = true;
    camcontrols.noZoom = false;
-   element.addEventListener('click', fullscreen, false);
+   element.addEventListener('dblclick', fullscreen, false);
 var light = new THREE.PointLight(0xffffff, 1, 1000);
    light.position.set(0,50,0);
    scene_scatterplot.add(light);
