@@ -1,5 +1,5 @@
 var selectedVariable = ["","",""];
-var PColor = {min:"#FFFFFF", max:"#FFFFFF"};
+var PColor = {min:"#FFFF00", max:"#FFFF00"};
 var IsRotating = false;
 var HasGrid = true;
 var loaded_data = [];
@@ -230,7 +230,7 @@ function mout(d) {
 
 $( document ).ready(function(){
 	    $("#loadedcsvfile").draggable();
-  	  $("#loadedcsvfile").draggable('disable');
+  	    $("#loadedcsvfile").draggable('disable');
 	    $("#csvtitle").mouseover(function(){$("#loadedcsvfile").draggable("enable");});
 	    $("#csvtitle").mouseout(function(){$("#loadedcsvfile").draggable("disable");});
         renderViz("data/runs8-test.csv",scatterPlot, "x","y","z");
@@ -280,7 +280,7 @@ var keyboard = new KeyboardState();
 
 // Add Hand controller
   controller1 = new THREE.ViveController( 0 );
-  controller1.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
+  //controller1.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
   controller1.addEventListener( 'triggerdown', onTriggerDown );
   controller1.addEventListener( 'triggerup', onTriggerUp );
   controller1.addEventListener('gripsdown',onGripsDown );
@@ -288,7 +288,7 @@ var keyboard = new KeyboardState();
   scene_scatterplot.add( controller1 );
 
   controller2 = new THREE.ViveController( 1 );
-  controller2.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
+  //controller2.standingMatrix = renderer_scatterplot.vr.getStandingMatrix();
   controller2.addEventListener( 'triggerdown', onTriggerDown );
   controller2.addEventListener( 'triggerup', onTriggerUp );
   controller2.addEventListener('gripsdown',onGripsDown );
@@ -516,7 +516,8 @@ function createGUI(){
                   gridblacktexture.minFilter = THREE.LinearFilter;
                   var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
                   var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
-                  var cube = new THREE.Mesh( cubegeo, [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
+                 // var cube = new THREE.Mesh( cubegeo,[cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
+                  var cube = new THREE.Mesh( cubegeo,cubematerial1 );
                   cube.name = "cube"  
                   for( var i = scene_scatterplot.children.length - 1; i >= 0; i--){
                        obj = scene_scatterplot.children[i];
@@ -600,6 +601,7 @@ function createGUI(){
               if(controls.WebVR){
                  dummy = new THREE.Camera();
                  dummy.position.set(0,10,0);
+                 
   
                  dummy.lookAt(scene_scatterplot.position);
                  scene_scatterplot.add(dummy);
@@ -650,7 +652,7 @@ function createGUI(){
    
              points.material = new THREE.PointsMaterial({
                                  
-                                  size:0.15,
+                                  size:0.2,
                                   map:texture,
                                   alphaTest: 0.1,
                                   opacity:0.35,
@@ -816,7 +818,8 @@ function renderViz(filename, scatterPlot,  variableX, variableY, variableZ){
         gridblacktexture.minFilter = THREE.LinearFilter;
         var cubematerial1 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridblacktexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.BackSide} );
         var cubematerial2 = new THREE.MeshBasicMaterial( {color: 0xFFFFFF, map:gridwhitetexture, transparent:true, opacity:0.15, depthTest: false, side: THREE.DoubleSide} );
-        var cube = new THREE.Mesh( cubegeo, [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] );
+        var faceMaterial = [cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial1,cubematerial2] ;
+        var cube = new THREE.Mesh( cubegeo, cubematerial1 );
         cube.name = "cube"  
         scatterPlot.add(cube);
         
@@ -824,7 +827,7 @@ function renderViz(filename, scatterPlot,  variableX, variableY, variableZ){
         texture.minFilter = THREE.LinearFilter;
      
         var material = new THREE.PointsMaterial({
-            size:0.15,
+            size:0.2,
             map:texture,
             alphaTest: 0.15,
             opacity: 0.35,
