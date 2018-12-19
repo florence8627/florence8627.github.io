@@ -61,7 +61,7 @@ var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
   upd.attr('stroke-width', 1 / proj.scale);
 });
 
-L.control.layers({"Geo Tiles": tiles_satellite}, {"Satellite": tiles_dark}).addTo(map);
+L.control.layers({"Geo Tiles": tiles_satellite}, {"Map": tiles_dark}).addTo(map);
 
 d3.json("features.geojson", function(data) { 
   buildings= data.features; 
