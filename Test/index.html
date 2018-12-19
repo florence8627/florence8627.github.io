@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+
+    <style type="text/css">
+        html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #map-canvas { height: 100% }
+    </style>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'
+    	rel='stylesheet' type='text/css'/>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+
+</head>
+<body>
+  <div id="map-canvas"></div>
+  <div id="time">
+  <svg id="slidersvg"></svg>
+  </div>
+  </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+<script src="L.D3SvgOverlay.min.js"></script>
+<script>
+
+var map = L.map("map-canvas", {center: [-37.9119, 145.1344], zoom: 16});
+// open street map tile layer
+//var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar'});
+
+// map box tile layer
+var tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.dark',
+    accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
+});
+tiles.addTo(map);
+
+var buildings = [];
+var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
+	
+  var upd = sel.selectAll('path').data(buildings);
+  upd.enter()
+    .append('path')
+    .attr("id", function (d) {return d.properties.name})
+    .attr('d', proj.pathFromGeojson)
+    .attr('stroke', 'black')
+   // .attr('fill', function(){ return d3.hsl(Math.random() * 360, 0.9, 0.5) })
+    .attr('fill', function(){ return d3.hsl(360, 0.05, 0.9) })
+    .attr('title', function (d) {return d.properties.name})
+    .attr('fill-opacity', '0.8');
+  upd.attr('stroke-width', 1 / proj.scale);
+});
+
+L.control.layers({"Geo Tiles": tiles}, {"buildings": buildingsOverlay}).addTo(map);
+
+d3.json("features.geojson", function(data) { 
+  buildings= data.features; 
+  console.log(buildings);
+  buildingsOverlay.addTo(map) 
+});
+
+var width = 1500;
+var x = d3.scale.linear().domain([5,12]).range([0, width-50]).clamp(true);
+var brush = d3.svg.brush().x(x).extent([0, 0]);
+ 
+var slider = d3.select("#slidersvg").attr("width", width).attr("height", 40).append("g").attr("class", "slider").attr("transform","translate(20,10)");
+var classflow = slider.append("g").attr("class","classflow");
+slider.append("g").attr("class", "x axis").call(d3.svg.axis().scale(x).orient("bottom")
+      .tickFormat(function(d) { return "Month"+d; })
+      .ticks(8)
+      .tickSize(0)
+      .tickPadding(12))
+      .select(".domain")
+      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+      .attr("class", "halo");
+var handle = slider.append("circle").attr("class", "handle").attr("r", 9);
+
+
+d3.csv("consump.csv", function(data){
+    //console.log(data);
+   //slider action
+
+    brush.on("brush", function(){
+                  var value = brush.extent()[0];
+
+            if (d3.event.sourceEvent) { // not a programmatic event
+              value = x.invert(d3.mouse(this)[0]);
+              brush.extent([value, value]);
+              }
+
+            handle.attr("cx", x(value));
+            var month = Math.round(value);
+            // console.log(month);
+            // console.log(data[month-5]["Building_4"]);
+            // console.log(data[month-5]["Building_5"]);
+
+ 
+            
+            d3.select("#building_4").attr("fill", colorcode(data[month-5]["Building_4"],24041.7,819623.7));
+            d3.select("#building_5").attr("fill", colorcode(data[month-5]["Building_5"],24041.7,819623.7));
+            d3.select("#building_61").attr("fill", colorcode(data[month-5]["Building_61"],24041.7,819623.7));
+             d3.select("#building_1").attr("fill", colorcode(data[month-5]["Building_1"],24041.7,819625));
+                 
+                 
+              
+             });
+    
+  slider.call(brush);
+});
+//slider animation introduction
+slider.call(brush.event).transition().delay(20).duration(10000).call(brush.extent([12, 12])).call(brush.event);
+
+function colorcode(Consumption, min, max){
+   //console.log(Consumption);
+  if (Consumption== -1){
+  	
+  	return "rgb(0.9,0.9,0.9)";
+  }
+  if(Consumption!=-1){
+      var hue = 0.5-((Consumption-min)/(max-min))*0.5;
+	  rgb_color = HSVtoRGB(hue,1,1);
+	  //console.log(Consumption);
+	  return "rgb("+rgb_color.r+","+rgb_color.g+","+rgb_color.b+")";
+  }
+}
+function HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (arguments.length === 1) {
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+</script>
+    
+</body>
+</html>
