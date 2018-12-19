@@ -61,7 +61,8 @@ d3.json("features.geojson", function(data) {
   buildingsOverlay.addTo(map) 
 });
 
-var width = 1500;
+var width = document.getElementById('map-canvas').offsetWidth;
+//console.log(width);
 var x = d3.scale.linear().domain([5,12]).range([0, width-50]).clamp(true);
 var brush = d3.svg.brush().x(x).extent([0, 0]);
  
