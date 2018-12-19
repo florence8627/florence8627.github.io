@@ -27,15 +27,23 @@
 var map = L.map("map-canvas", {center: [-37.9119, 145.1344], zoom: 16});
 // open street map tile layer
 //var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar'});
-
 // map box tile layer
-var tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom: 16,
+    id: 'mapbox.streets-satellite',
+    accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
+});
+tiles_satellite.addTo(map);
+// map box tile layer
+var tiles_dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 16,
     id: 'mapbox.dark',
     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
 });
-tiles.addTo(map);
+tiles_dark.addTo(map);
+
 
 var buildings = [];
 var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
@@ -53,7 +61,7 @@ var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
   upd.attr('stroke-width', 1 / proj.scale);
 });
 
-L.control.layers({"Geo Tiles": tiles}, {"buildings": buildingsOverlay}).addTo(map);
+L.control.layers({"Geo Tiles": tiles_satellite}, {"Satellite": tiles_dark}).addTo(map);
 
 d3.json("features.geojson", function(data) { 
   buildings= data.features; 
