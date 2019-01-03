@@ -73,20 +73,21 @@ d3.json("features.geojson", function(data) {
 
 var width = document.getElementById('map-canvas').offsetWidth;
 //console.log(width);
-var x = d3.scale.linear().domain([6,12]).range([0, width-50]).clamp(true);
+var x = d3.scale.linear().domain([6,17]).range([0, width-50]).clamp(true);
 var brush = d3.svg.brush().x(x).extent([0, 0]);
  
 var slider = d3.select("#slidersvg").attr("width", width).attr("height", 40).append("g").attr("class", "slider").attr("transform","translate(20,10)");
 var classflow = slider.append("g").attr("class","classflow");
 slider.append("g").attr("class", "x axis").call(d3.svg.axis().scale(x).orient("bottom")
-      .tickFormat(function(d) { return "2016-"+d; })
-      .ticks(8)
+      .tickFormat(function(d) { if (d<=12){return "2016-"+d;}
+                                if (d> 12){return "2017-"+(d-12);} } )
+      .ticks(12)
       .tickSize(0)
       .tickPadding(12))
       .select(".domain")
       .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
       .attr("class", "halo");
-var handle = slider.append("circle").attr("class", "handle").attr("r", 9);
+var handle = slider.append("circle").attr("class", "handle").attr("r", 10);
 
 
 d3.csv("consump_all.csv", function(data){
@@ -102,6 +103,7 @@ d3.csv("consump_all.csv", function(data){
 
             handle.attr("cx", x(value));
             var month = Math.round(value);
+
             // console.log(month);
             console.log(d3.max(data.map(function(d){return d.Building_4})));
             // console.log(data[month-5]["Building_5"]);
@@ -110,7 +112,7 @@ d3.csv("consump_all.csv", function(data){
             for (i=0; i<building_no.length;i++){
 	           max_value = d3.max(data.map(function(d){return d["Building_"+building_no[i]]}));
 	           min_value = d3.min(data.map(function(d){return d["Building_"+building_no[i]]}));
-	           d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],min_value, max_value));
+	           d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],0, 875939));
             }
             
                  
