@@ -112,7 +112,7 @@ d3.csv("consump_all.csv", function(data){
             for (i=0; i<building_no.length;i++){
 	           max_value = d3.max(data.map(function(d){return d["Building_"+building_no[i]]}));
 	           min_value = d3.min(data.map(function(d){return d["Building_"+building_no[i]]}));
-	           d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],0, 875939));
+	           d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],0, 1900000));
             }
             
                  
