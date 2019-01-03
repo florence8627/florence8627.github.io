@@ -28,13 +28,13 @@ var map = L.map("map-canvas", {center: [-37.9119, 145.1344], zoom: 16});
 // open street map tile layer
 //var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar'});
 // map box tile layer
-var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 25,
-    id: 'mapbox.streets-satellite',
-    accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
-});
-tiles_satellite.addTo(map);
+// var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+//     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+//     maxZoom: 25,
+//     id: 'mapbox.streets-satellite',
+//     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
+// });
+// tiles_satellite.addTo(map);
 // map box tile layer
 var tiles_dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -59,25 +59,27 @@ var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
     .attr('title', function (d) {return d.properties.name})
     .attr('fill-opacity', '0.8');
   upd.attr('stroke-width', 1 / proj.scale);
+  upd.append('title')
+     .text(function(d){return d.properties.name});
 });
 
-L.control.layers({"Geo Tiles": tiles_satellite}, {"Map": tiles_dark}).addTo(map);
+L.control.layers({"Geo Tiles": tiles_dark}, {"Buildings": buildingsOverlay}).addTo(map);
 
 d3.json("features.geojson", function(data) { 
   buildings= data.features; 
-  console.log(buildings);
+  //console.log(buildings);
   buildingsOverlay.addTo(map) 
 });
 
 var width = document.getElementById('map-canvas').offsetWidth;
 //console.log(width);
-var x = d3.scale.linear().domain([5,12]).range([0, width-50]).clamp(true);
+var x = d3.scale.linear().domain([6,12]).range([0, width-50]).clamp(true);
 var brush = d3.svg.brush().x(x).extent([0, 0]);
  
 var slider = d3.select("#slidersvg").attr("width", width).attr("height", 40).append("g").attr("class", "slider").attr("transform","translate(20,10)");
 var classflow = slider.append("g").attr("class","classflow");
 slider.append("g").attr("class", "x axis").call(d3.svg.axis().scale(x).orient("bottom")
-      .tickFormat(function(d) { return "Month"+d; })
+      .tickFormat(function(d) { return "2016-"+d; })
       .ticks(8)
       .tickSize(0)
       .tickPadding(12))
@@ -87,9 +89,8 @@ slider.append("g").attr("class", "x axis").call(d3.svg.axis().scale(x).orient("b
 var handle = slider.append("circle").attr("class", "handle").attr("r", 9);
 
 
-d3.csv("consump.csv", function(data){
-    //console.log(data);
-   //slider action
+d3.csv("consump_all.csv", function(data){
+   
 
     brush.on("brush", function(){
                   var value = brush.extent()[0];
@@ -102,15 +103,16 @@ d3.csv("consump.csv", function(data){
             handle.attr("cx", x(value));
             var month = Math.round(value);
             // console.log(month);
-            // console.log(data[month-5]["Building_4"]);
+            console.log(d3.max(data.map(function(d){return d.Building_4})));
             // console.log(data[month-5]["Building_5"]);
 
- 
+            building_no = [1,10,11,12,15,16,17,18,19,2,20,21,22,23,24,25,26,27,28,29,30,31,32,33,35,36,37,38,4,40,41,42,43,44,45,46,47,48,5,53,54,56,59,6,61,62,63,64,67,68,69,7,70,72,73,74,75,76,77,8,81,82,84,85,86,87,88,89,9,90];
+            for (i=0; i<building_no.length;i++){
+	           max_value = d3.max(data.map(function(d){return d["Building_"+building_no[i]]}));
+	           min_value = d3.min(data.map(function(d){return d["Building_"+building_no[i]]}));
+	           d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],min_value, max_value));
+            }
             
-            d3.select("#building_4").attr("fill", colorcode(data[month-5]["Building_4"],24041.7,819623.7));
-            d3.select("#building_5").attr("fill", colorcode(data[month-5]["Building_5"],24041.7,819623.7));
-            d3.select("#building_61").attr("fill", colorcode(data[month-5]["Building_61"],24041.7,819623.7));
-             d3.select("#building_1").attr("fill", colorcode(data[month-5]["Building_1"],24041.7,819625));
                  
                  
               
