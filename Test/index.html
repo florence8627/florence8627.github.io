@@ -23,6 +23,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
 <script src="L.D3SvgOverlay.min.js"></script>
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/gokertanrisever/leaflet-ruler/master/src/leaflet-ruler.css">
+<script src="https://cdn.rawgit.com/gokertanrisever/leaflet-ruler/master/src/leaflet-ruler.js"></script>
 
 <script>
 // map box tile layer
@@ -93,6 +95,15 @@ var overlayMaps = {"Buildings": buildingsOverlay};
 L.control.layers(baseMaps, overlayMaps).addTo(map);
 L.control.scale().addTo(map);
 map.addControl(new L.Control.Fullscreen());
+var options = {
+	lengthUnit:{
+		factor: 1000,
+		decimal: 2,
+		display:'meters',
+		label:'Distance'
+	}
+}
+L.control.ruler(options).addTo(map);
 
 d3.json("features-edit.geojson", function(data) { 
   buildings= data.features; 
