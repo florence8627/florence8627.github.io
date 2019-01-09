@@ -79,7 +79,7 @@ var upd = sel.selectAll('path').data(buildings);
     .attr('d', proj.pathFromGeojson)   
     .attr('fill', "white")
     .attr('fill-opacity', '0.8')
-    .attr('stroke', function(d){ if (d.properties.phase_1 == 'yes') return "white";} )
+    .attr('stroke', function(d){ if (d.properties.phase_1 == 'yes') return "orange";} )
     upd.attr('stroke-width', 1 / proj.scale);
   upd.append('title')
      .text(function(d){return d.properties.name});
@@ -112,7 +112,7 @@ var options = {
 L.control.ruler(options).addTo(map);
 // adding rotation control
 L.easyButton('<img src="images//rotation.png">', function(btn, map){
-    bearing = bearing-2.5;
+    bearing = bearing-1.5;
     map.setBearing(bearing);
 }).addTo( map );
 
