@@ -4,12 +4,12 @@
     <meta charset='utf-8' />
 
     <style type="text/css">
-        html { height: 100% }
+        html { height: 100%; overflow:hidden;}
         body { height: 100%; margin: 0; padding: 0 }
-        #map-canvas { height: 100% }
+        #map-canvas { height: 95% }
     </style>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'
-    	rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
     <link href="style.css" rel="stylesheet" type="text/css"/>
 
 </head>
@@ -19,31 +19,34 @@
   <svg id="slidersvg"></svg>
   </div>
   </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
 <script src="L.D3SvgOverlay.min.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+
 <script>
 // map box tile layer
 var tiles_dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    maxZoom: 25,
     id: 'mapbox.dark',
     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
 });
 
 var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    maxZoom: 25,
     id: 'mapbox.streets-satellite',
     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
 });
 
 
 var map = L.map("map-canvas", {
-	center: [-37.9119, 145.1344], 
-	zoom: 16,
+	center: [-37.9109, 145.1344], 
+	zoom: 17,
+	minZoom: 10,
+	maxZoom: 25,
     touchZoom: true,
-    zoomDelta: 0.1,
+    zoomSnap: 0.0,
+    zoomDelta:0.1,
     layers: [tiles_satellite,tiles_dark]
 });
 
@@ -59,7 +62,7 @@ d3.select("svg").append('defs').append("pattern")
 var buildings = [];
 var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
 	
-  var upd = sel.selectAll('path').data(buildings);
+var upd = sel.selectAll('path').data(buildings);
   
 
   upd.enter()
@@ -81,13 +84,15 @@ var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
     	                       if (d.properties.phase_1 != 'yes') 
     	                       	return "black";
     	                   })
-    .attr("fill-opacity","0.65");
+    .attr("fill-opacity","0.75");
     
 });
 
 var baseMaps = {"Satelite":tiles_satellite, "Symbolic": tiles_dark};
 var overlayMaps = {"Buildings": buildingsOverlay};
 L.control.layers(baseMaps, overlayMaps).addTo(map);
+L.control.scale().addTo(map);
+map.addControl(new L.Control.Fullscreen());
 
 d3.json("features-edit.geojson", function(data) { 
   buildings= data.features; 
