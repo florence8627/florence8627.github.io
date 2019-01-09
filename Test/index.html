@@ -7,9 +7,11 @@
         html { height: 100%; overflow:hidden;}
         body { height: 100%; margin: 0; padding: 0 }
         #map-canvas { height: 95% }
+        
     </style>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" /> -->
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+    <link href="leaflet-rotate.css" rel="stylesheet" type="text/css"/>
     <link href="style.css" rel="stylesheet" type="text/css"/>
 
 </head>
@@ -19,13 +21,15 @@
   <svg id="slidersvg"></svg>
   </div>
   </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js"></script> -->
+<script src="leaflet-rotate.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
 <script src="L.D3SvgOverlay.min.js"></script>
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/gokertanrisever/leaflet-ruler/master/src/leaflet-ruler.css">
 <script src="https://cdn.rawgit.com/gokertanrisever/leaflet-ruler/master/src/leaflet-ruler.js"></script>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
 <script>
 // map box tile layer
 var tiles_dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -40,15 +44,17 @@ var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/
     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
 });
 
-
+var bearing = 0;
 var map = L.map("map-canvas", {
 	center: [-37.9109, 145.1344], 
 	zoom: 17,
 	minZoom: 10,
 	maxZoom: 25,
-    touchZoom: true,
+    touchZoom: false,
     zoomSnap: 0.0,
     zoomDelta:0.1,
+    rotate:true,
+    touchRotate:true,
     layers: [tiles_satellite,tiles_dark]
 });
 
@@ -104,6 +110,13 @@ var options = {
 	}
 }
 L.control.ruler(options).addTo(map);
+// adding rotation control
+L.easyButton('<img src="images//rotation.png">', function(btn, map){
+    bearing = bearing-2.5;
+    map.setBearing(bearing);
+}).addTo( map );
+
+
 
 d3.json("features-edit.geojson", function(data) { 
   buildings= data.features; 
