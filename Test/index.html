@@ -7,7 +7,10 @@
         html { height: 100%; overflow:hidden;}
         body { height: 100%; margin: 0; padding: 0 }
         #map-canvas { height: 95% }
-        
+        .leaflet-overlay-pane svg path{
+         pointer-events: auto;
+         }
+
     </style>
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" /> -->
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
@@ -55,6 +58,7 @@ var map = L.map("map-canvas", {
     zoomDelta:0.1,
     rotate:true,
     touchRotate:false,
+    doubleClickZoom:false,
     layers: [tiles_satellite,tiles_dark]
 });
 
@@ -75,22 +79,25 @@ var upd = sel.selectAll('path').data(buildings);
 
   upd.enter()
     .append('path')
-    .filter(function(d){return (d.properties.phase_1 == 'yes')&&(d.properties.name.includes("building_"))})
+    .filter(function(d){return d.properties.phase_1 == 'yes'})
     .attr("id", function (d) {return d.properties.name})
     .attr('d', proj.pathFromGeojson)   
     .attr('fill', "white")
     .attr('fill-opacity', '1')
     .attr('stroke', "orange")
-    .attr('stroke-width', 1 / proj.scale);
-  upd.append('title')
-     .text(function(d){return d.properties.name});
-     upd.enter()
+    .attr('stroke-width', 1 / proj.scale)
+    
+
+
+  upd.enter()
      .append('path')
      .filter(function(d){return d.properties.phase_1!='yes'})
      .attr("id", function (d) {return d.properties.name})
      .attr('d', proj.pathFromGeojson)   
      .attr('fill', "black")
-     .attr("fill-opacity","0.1");
+     .attr("fill-opacity","0.1")
+     .attr('stroke-width', 1 / proj.scale);
+   
     
 });
 
