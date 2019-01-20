@@ -86,7 +86,8 @@ var upd = sel.selectAll('path').data(buildings);
     .attr('fill-opacity', '1')
     .attr('stroke', "orange")
     .attr('stroke-width', 1 / proj.scale)
-    
+    // .append("title")
+    // .text(function(d){return d.properties.name});
 
 
   upd.enter()
@@ -96,7 +97,10 @@ var upd = sel.selectAll('path').data(buildings);
      .attr('d', proj.pathFromGeojson)   
      .attr('fill', "black")
      .attr("fill-opacity","0.1")
-     .attr('stroke-width', 1 / proj.scale);
+     .attr('stroke-width', 1 / proj.scale)
+     // .append("title")
+     // .text(function(d){return d.properties.name});
+
    
     
 });

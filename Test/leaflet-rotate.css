@@ -88,7 +88,7 @@
 .leaflet-popup-pane   { z-index: 700; }
 
 .leaflet-map-pane canvas { z-index: 100; }
-.leaflet-map-pane svg    { z-index: 10000; }
+.leaflet-map-pane svg    { z-index: 200; }
 
 .leaflet-vml-shape {
 	width: 1px;
@@ -221,7 +221,8 @@
 .leaflet-image-layer,
 .leaflet-pane > svg path,
 .leaflet-tile-container {
-	pointer-events: none;
+	/*the following disables click event on map*/
+	/*pointer-events: none;*/
 	}
 
 .leaflet-marker-icon.leaflet-interactive,
