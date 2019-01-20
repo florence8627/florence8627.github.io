@@ -49,12 +49,12 @@ var map = L.map("map-canvas", {
 	center: [-37.9109, 145.1344], 
 	zoom: 17,
 	minZoom: 10,
-	maxZoom: 25,
+	maxZoom: 30,
     touchZoom: false,
     zoomSnap: 0.0,
     zoomDelta:0.1,
     rotate:true,
-    touchRotate:true,
+    touchRotate:false,
     layers: [tiles_satellite,tiles_dark]
 });
 
@@ -180,7 +180,7 @@ d3.csv("consump_all.csv", function(data){
 });
 
 //slider animation introduction
-slider.call(brush.event).transition().delay(20).duration(10000).call(brush.extent([12, 12])).call(brush.event);
+slider.call(brush.event).transition().delay(20).duration(10000).call(brush.extent([17, 17])).call(brush.event);
 
 function colorcode(Consumption, min, max){
    //console.log(Consumption);
