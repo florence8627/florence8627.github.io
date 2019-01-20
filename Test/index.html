@@ -61,11 +61,11 @@ var map = L.map("map-canvas", {
 
 //adding pattern definition
 d3.select("svg").append('defs').append("pattern")
-                               .attr({id:"diagonal-stripe-3",patternUnits:"userSpaceOnUse",width:"4",height:"4"})
+                               .attr({id:"diagonal-stripe-3",patternUnits:"userSpaceOnUse",width:"5",height:"5"})
                                .append('path')
 							    .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
 							    .attr('stroke', '#000000')
-							    .attr('stroke-width', 0.5)
+							    .attr('stroke-width', 0.2)
 							    .attr('fill','none');
 var buildings = [];
 var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
@@ -75,24 +75,22 @@ var upd = sel.selectAll('path').data(buildings);
 
   upd.enter()
     .append('path')
+    .filter(function(d){return (d.properties.phase_1 == 'yes')&&(d.properties.name.includes("building_"))})
     .attr("id", function (d) {return d.properties.name})
     .attr('d', proj.pathFromGeojson)   
     .attr('fill', "white")
-    .attr('fill-opacity', '0.8')
-    .attr('stroke', function(d){ if (d.properties.phase_1 == 'yes') return "orange";} )
-    upd.attr('stroke-width', 1 / proj.scale);
+    .attr('fill-opacity', '1')
+    .attr('stroke', "orange")
+    .attr('stroke-width', 1 / proj.scale);
   upd.append('title')
      .text(function(d){return d.properties.name});
      upd.enter()
      .append('path')
-     .attr("id", function (d) {return d.properties.name+"_pattern"})
-    .attr('d', proj.pathFromGeojson)   
-    .attr('fill', function (d){if (d.properties.phase_1 == 'yes') 
-    	                       return "url(#diagonal-stripe-3)";
-    	                       if (d.properties.phase_1 != 'yes') 
-    	                       	return "black";
-    	                   })
-    .attr("fill-opacity","0.75");
+     .filter(function(d){return d.properties.phase_1!='yes'})
+     .attr("id", function (d) {return d.properties.name})
+     .attr('d', proj.pathFromGeojson)   
+     .attr('fill', "black")
+     .attr("fill-opacity","0.1");
     
 });
 
