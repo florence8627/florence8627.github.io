@@ -7,10 +7,39 @@
         html { height: 100%; overflow:hidden;}
         body { height: 100%; margin: 0; padding: 0 }
         #map-canvas { height: 95% }
-        .leaflet-overlay-pane svg path{
-         pointer-events: auto;
-         }
+        .panel{
+        	position:fixed;
+        	z-index:1000;
+        	left: 60px;
+        	top: 10px;
+        	width:50%;
+        	height:50%;
+        	display:none;
+        }
 
+		.panel-content {
+		  background-color: #fefefe;
+		  margin:auto;
+		  padding: 5px;
+		  border: 1px solid #888;
+		  width : 50%; /* Could be more or less, depending on screen size */
+		  height: 50%;
+		}
+
+		/* The Close Button */
+		.close {
+		  color: #aaa;
+		  float: right;
+		  font-size: 20px;
+		  font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+		  color: black;
+		  text-decoration: none;
+		  cursor: pointer;
+		}
     </style>
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" /> -->
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
@@ -19,6 +48,12 @@
 
 </head>
 <body>
+  <div id="info-panel" class="panel">
+  	<div class="panel-content">
+  	<!-- the close button for the panel  -->
+  	<span class="close">&times;</span>
+  	</div>
+  </div>
   <div id="map-canvas"></div>
   <div id="time">
   <svg id="slidersvg"></svg>
@@ -126,11 +161,13 @@ L.easyButton('<img src="images//rotation.png">', function(btn, map){
     bearing = bearing-1.5;
     map.setBearing(bearing);
 }).addTo( map );
-// adding weather control
+
+// adding additional info panel 
 L.easyButton('<img src="images//weather.png">', function(btn,map){
+	d3.select("#info-panel").style("display","block");
 
 }).addTo(map);
-
+d3.select(".close").on("click", function(){d3.select("#info-panel").style("display","none")});
 
 d3.json("features-edit.geojson", function(data) { 
   buildings= data.features; 
