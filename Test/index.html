@@ -10,10 +10,10 @@
         .panel{
         	position:absolute;
         	z-index:1000;
-        	left: 60px;
+        	left: 50px;
         	top: 10px;
-        	width:50%;
-        	height:50%;
+        	width:65%;
+        	height:60%;
         	display:none;
         }
 
@@ -22,8 +22,8 @@
 		  margin:auto;
 		  padding: 5px;
 		  border: 1px solid #888;
-		  width : 50%; /* Could be more or less, depending on screen size */
-		  height: 50%;
+		  width : 65%; /* Could be more or less, depending on screen size */
+		  height: 60%;
 		}
 
 		/* The Close Button */
@@ -40,6 +40,23 @@
 		  text-decoration: none;
 		  cursor: pointer;
 		}
+
+		.axis path,
+		.axis line {
+		  fill: none;
+		  stroke: #000;
+		  shape-rendering: crispEdges;
+		  opacity:0.3;
+		  width:0.5;
+		}
+
+
+
+		.line {
+		  fill: none;
+		  stroke: steelblue;
+		  stroke-width: 1.5px;
+		}
     </style>
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" /> -->
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
@@ -52,6 +69,7 @@
   	<div class="panel-content">
   	<!-- the close button for the panel  -->
   	<span class="close">&times;</span>
+  	
   	</div>
   </div>
   <div id="map-canvas"></div>
@@ -165,9 +183,112 @@ L.easyButton('<img src="images//rotation.png">', function(btn, map){
 // adding additional info panel 
 L.easyButton('<img src="images//weather.png">', function(btn,map){
 	d3.select("#info-panel").style("display","block");
+	//drawlinegraph
+	     // set the dimensions and margins of the graph
+         var margin = {top: 20, right: 110, bottom: 30, left: 40},
+         width = 700 - margin.left - margin.right,
+         height = 200 - margin.top - margin.bottom;
+         var svg = d3.select(".panel-content").append("svg")
+   					 .attr("width", width + margin.left + margin.right)
+   					 .attr("height", height + margin.top + margin.bottom)
+ 					 .append("g")
+ 					 .attr("id","weather-chart")
+  					 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+         var parseDate = d3.time.format("%Y%m%d").parse;
+
+		var x = d3.time.scale().range([0, width]);
+
+
+		var y = d3.scale.linear().range([height, 0]);
+
+        var color = d3.scale.category10();
+
+		var xAxis = d3.svg.axis()
+		    .scale(x)
+		    .orient("bottom");
+            console.log(xAxis);
+
+		var yAxis = d3.svg.axis()
+		    .scale(y)
+		    .orient("left");
+
+		var line = d3.svg.line()
+		    .interpolate("basis")
+		    .x(function(d) { return x(d.date); })
+		    .y(function(d) { return y(d.para_value); });
+
+	 d3.csv("meanMonthlyTemp.csv", function(error, data) {
+
+		  if (error) throw error;
+		
+		  color.domain(d3.keys(data[0]).filter(function(key) { return (key !== "date")&&(key !== "Month")&&(key !== "Year"); }));
+		 
+		  data.forEach(function(d) {
+		  
+		    d.date = parseDate(d.date);
+		  });
+
+		   
+
+		  var weather_parameters = color.domain().map(function(name) {
+		    return {
+		      name: name,
+		      values: data.map(function(d) {
+		        return {date: d.date, para_value: +d[name]};
+		      })
+		    };
+		  });
+        
+          console.log(weather_parameters);
+
+		  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+		  y.domain([
+		    0,
+		    d3.max(weather_parameters, function(c) { return d3.max(c.values, function(v) { return v.para_value; }); })
+		  ]);
+
+          console.log(x.domain);
+		  svg = d3.select("#weather-chart")
+
+		  svg.append("g")
+		      .attr("class", "x axis")
+		      .attr("transform", "translate(0," + height + ")")
+		      .call(xAxis);
+
+		  svg.append("g")
+		      .attr("class", "y axis")
+		      .call(yAxis)
+		    .append("text")
+		      .attr("transform", "rotate(-90)")
+		      .attr("y", 10)
+		      .attr("dy", ".71em")
+		      .style("text-anchor", "end")
+		      .text("Temperature");
+
+		  var info = svg.selectAll(".weather_parameters")
+		      .data(weather_parameters)
+		     .enter().append("g")
+		      .attr("class", "weather_parameters");
+
+		  info.append("path")
+		      .attr("class", "line")
+		      .attr("d", function(d) { return line(d.values); })
+		      .style("stroke", function(d) { return color(d.name); });
+
+		  info.append("text")
+		      .datum(function(d) { return {name: d.name, value: d.values[d.values.length-1]}; })
+		      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.para_value) + ")"; })
+		      .attr("x", 3)
+		      .attr("dy", ".35em")
+		      .text(function(d) { return d.name; });
+		});
 
 }).addTo(map);
 d3.select(".close").on("click", function(){d3.select("#info-panel").style("display","none")});
+
+
 
 d3.json("features-edit.geojson", function(data) { 
   buildings= data.features; 
@@ -196,7 +317,6 @@ var handle = slider.append("circle").attr("class", "handle").attr("r", 10);
 
 d3.csv("consump_all.csv", function(data){
    
-
     brush.on("brush", function(){
                   var value = brush.extent()[0];
 
