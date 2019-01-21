@@ -58,7 +58,6 @@ var map = L.map("map-canvas", {
     zoomDelta:0.1,
     rotate:true,
     touchRotate:false,
-    doubleClickZoom:false,
     layers: [tiles_satellite,tiles_dark]
 });
 
@@ -124,7 +123,10 @@ L.easyButton('<img src="images//rotation.png">', function(btn, map){
     bearing = bearing-1.5;
     map.setBearing(bearing);
 }).addTo( map );
+// adding weather control
+L.easyButton('<img src="images//weather.png">', function(btn,map){
 
+}).addTo(map);
 
 
 d3.json("features-edit.geojson", function(data) { 
