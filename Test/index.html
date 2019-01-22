@@ -8,7 +8,7 @@
         body { height: 100%; 
         	   margin: 0; 
         	   padding: 0 ;
-        	   font: 10px sans-serif;}
+        	  }
         #map-canvas { height: 95% }
         .panel{
         	position:absolute;
@@ -23,14 +23,14 @@
         }
 
 		.panel-content {
-		  background-color: #ffffff;
-		  opacity:0.80;
+		  background-color: #000000;
+		  opacity:0.65;
 		
 		  padding: 5px;
 		  /*border: 1px solid #888;*/
 		/*  width : 65%;  Could be more or less, depending on screen size 
 		  height: 60%;*/
-		  border: 1px solid gray;
+		  border: 2px solid gray;
           border-radius: 25px;
 
 
@@ -50,17 +50,23 @@
 		  text-decoration: none;
 		  cursor: pointer;
 		}
-
+        #weather-chart text{
+        	 stroke:white;
+        	 stroke-width:0.5px;
+        	 fill:white;
+        	 font: 11px sans-serif;
+        }
 		.x_axis path,
 		.y_axis path,
 		.x_axis line,
 		.y_axis line{
 		  fill: none;
-		  stroke: #000;
+		  stroke: #fff;
 		  shape-rendering: crispEdges;
 		  opacity:1;
 		  width:0.5;
 		  stroke-width:1px;
+
 		}
 
 
@@ -311,7 +317,7 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 				      .data(function(d){return d.values})
 				      .enter()
 				      .append("circle")
-				      .attr("r",3)
+				      .attr("r",4)
 		              .attr("cx", function(d){return x(d.date);})
 		              .attr("cy", function(d){return y(d.para_value);})
 		              .style("fill", function(d,i,j){return color(weather_parameters[j].name);});
