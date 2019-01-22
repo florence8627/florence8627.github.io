@@ -82,7 +82,7 @@
   	<div class ="panel-content">
   	<!-- the close button for the panel  -->
   	<span class="close">&times;</span>
-  	
+  	<svg id="weather-chart"></svg>
   	</div>
   </div>
   <div id="map-canvas"></div>
@@ -173,6 +173,7 @@ var upd = sel.selectAll('path').data(buildings);
     
 });
 
+
 var baseMaps = {"Satelite":tiles_satellite, "Symbolic": tiles_dark};
 var overlayMaps = {"Buildings": buildingsOverlay};
 L.control.layers(baseMaps, overlayMaps).addTo(map);
@@ -196,27 +197,29 @@ L.easyButton('<img src="images//rotation.png">', function(btn, map){
 
 // adding additional info panel 
 L.easyButton('<img src="images//weather.png">', function(btn,map){
-	d3.select("#info-panel").style("display","block");
-	//drawlinegraph
-	     // set the dimensions and margins of the graph
-         var margin = {top: 5, right: 90, bottom: 30, left: 40},
-         width = document.getElementById("info-panel").clientWidth - margin.left - margin.right,
-         height = document.getElementById("info-panel").clientHeight - margin.top - margin.bottom;
-         var svg = d3.select(".panel-content").append("svg")
-   					 .attr("width", width + margin.left + margin.right)
-   					 .attr("height", height + margin.top + margin.bottom)
- 					 .append("g")
- 					 .attr("id","weather-chart")
-  					 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	d3.select("#info-panel").style("display","block");//generating weather charts
+		
+		//generate the chart if it doesn't exist, otherwise just hide it
+		if(d3.select("#weather-chart").attr("width")==null){
+			 // set the dimensions and margins of the graph
+		var margin = {top: 5, right: 90, bottom: 30, left: 20},
+		width = document.getElementById("info-panel").clientWidth - margin.left - margin.right,
+		height = document.getElementById("info-panel").clientHeight - margin.top - margin.bottom;
+		var svg = d3.select("#weather-chart")
+						 .attr("width", width + margin.left + margin.right)
+						 .attr("height", height + margin.top + margin.bottom)
+						 .append("g")
+						 .attr("id","weather-chart-group")
+						 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-         var parseDate = d3.time.format("%Y%m%d").parse;
+		var parseDate = d3.time.format("%Y%m%d").parse;
 
 		var x = d3.time.scale().range([0, width]);
 
 
 		var y = d3.scale.linear().range([height, 0]);
 
-        var color = d3.scale.category10();
+		var color = d3.scale.category10();
 
 		var xAxis = d3.svg.axis()
 		    .scale(x)
@@ -227,8 +230,8 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 				    } else {
 				      return d3.time.format('%Y')(date);
 				    }
-                    });
-           
+		            });
+		   
 
 		var yAxis = d3.svg.axis()
 		    .scale(y)
@@ -239,84 +242,87 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 		    .x(function(d) { return x(d.date); })
 		    .y(function(d) { return y(d.para_value); });
 
-	 d3.csv("meanMonthlyTemp.csv", function(error, data) {
+		d3.csv("meanMonthlyTemp.csv", function(error, data) {
 
-		  if (error) throw error;
+				  if (error) throw error;
+				
+				  color.domain(d3.keys(data[0]).filter(function(key) { return (key !== "date")&&(key !== "Month")&&(key !== "Year"); }));
+				 
+				  data.forEach(function(d) {
+				  
+				    d.date = parseDate(d.date);
+				  });
+
+				   
+
+				  var weather_parameters = color.domain().map(function(name) {
+				    return {
+				      name: name,
+				      values: data.map(function(d) {
+				        return {date: d.date, para_value: +d[name]};
+				      })
+				    };
+				  });
+		        
+		          //console.log(weather_parameters);
+
+				  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+				  y.domain([
+				    4,
+				    d3.max(weather_parameters, function(c) { return d3.max(c.values, function(v) { return v.para_value; }); })
+				  ]);
+
+		       
+				  
+				  svg.append("g")
+				      .attr("class", "x_axis")
+				      .attr("transform", "translate(0," + height + ")")
+				      .call(xAxis);
+
+				  svg.append("g")
+				      .attr("class", "y_axis")
+				      .call(yAxis)
+				     .append("text")
+				      .attr("transform", "rotate(-90)")
+				      .attr("y", 10)
+				      .attr("dy", ".71em")
+				      .style("text-anchor", "end")
+				      .text("Temperature");
+
+				  var info = svg.selectAll(".weather_parameters")
+				      .data(weather_parameters)
+				      .enter().append("g")
+				      .attr("class", "weather_parameters");
+
+				  info.append("path")
+				      .attr("class", "line")
+				      .attr("d", function(d) { return line(d.values); })
+				      .style("stroke", function(d) { return color(d.name); });
+
+				  info.append("text")
+				      .datum(function(d) { return {name: d.name, value: d.values[d.values.length-1]}; })
+				      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.para_value) + ")"; })
+				      .attr("x", 3)
+				      .attr("dy", ".35em")
+				      .text(function(d) { return d.name; });
+
+				  info.selectAll("circle")
+				      .data(function(d){return d.values})
+				      .enter()
+				      .append("circle")
+				      .attr("r",3)
+		              .attr("cx", function(d){return x(d.date);})
+		              .attr("cy", function(d){return y(d.para_value);})
+		              .style("fill", function(d,i,j){return color(weather_parameters[j].name);});
+		});
+
+
+		}
+
 		
-		  color.domain(d3.keys(data[0]).filter(function(key) { return (key !== "date")&&(key !== "Month")&&(key !== "Year"); }));
-		 
-		  data.forEach(function(d) {
-		  
-		    d.date = parseDate(d.date);
-		  });
-
-		   
-
-		  var weather_parameters = color.domain().map(function(name) {
-		    return {
-		      name: name,
-		      values: data.map(function(d) {
-		        return {date: d.date, para_value: +d[name]};
-		      })
-		    };
-		  });
-        
-          //console.log(weather_parameters);
-
-		  x.domain(d3.extent(data, function(d) { return d.date; }));
-
-		  y.domain([
-		    4,
-		    d3.max(weather_parameters, function(c) { return d3.max(c.values, function(v) { return v.para_value; }); })
-		  ]);
-
-       
-		  svg = d3.select("#weather-chart")
-
-		  svg.append("g")
-		      .attr("class", "x_axis")
-		      .attr("transform", "translate(0," + height + ")")
-		      .call(xAxis);
-
-		  svg.append("g")
-		      .attr("class", "y_axis")
-		      .call(yAxis)
-		    .append("text")
-		      .attr("transform", "rotate(-90)")
-		      .attr("y", 10)
-		      .attr("dy", ".71em")
-		      .style("text-anchor", "end")
-		      .text("Temperature");
-
-		  var info = svg.selectAll(".weather_parameters")
-		      .data(weather_parameters)
-		     .enter().append("g")
-		      .attr("class", "weather_parameters");
-
-		  info.append("path")
-		      .attr("class", "line")
-		      .attr("d", function(d) { return line(d.values); })
-		      .style("stroke", function(d) { return color(d.name); });
-
-		  info.append("text")
-		      .datum(function(d) { return {name: d.name, value: d.values[d.values.length-1]}; })
-		      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.para_value) + ")"; })
-		      .attr("x", 3)
-		      .attr("dy", ".35em")
-		      .text(function(d) { return d.name; });
-
-		  info.selectAll("circle")
-		      .data(function(d){return d.values})
-		      .enter()
-		      .append("circle")
-		      .attr("r",3)
-              .attr("cx", function(d){return x(d.date);})
-              .attr("cy", function(d){return y(d.para_value);})
-              .style("fill", function(d,i,j){return color(weather_parameters[j].name);});
-
-});
-
 }).addTo(map);
+
 d3.select(".close").on("click", function(){d3.select("#info-panel").style("display","none")});
 
 
@@ -345,11 +351,10 @@ slider.append("g").attr("class", "x axis").call(d3.svg.axis().scale(x).orient("b
       .attr("class", "halo");
 var handle = slider.append("circle").attr("class", "handle").attr("r", 10);
 
-
 d3.csv("consump_all.csv", function(data){
    
     brush.on("brush", function(){
-                  var value = brush.extent()[0];
+            var value = brush.extent()[0];
 
             if (d3.event.sourceEvent) { // not a programmatic event
               value = x.invert(d3.mouse(this)[0]);
@@ -370,8 +375,7 @@ d3.csv("consump_all.csv", function(data){
                d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],0, 1900000));
                 
 
-
-            }
+               }
             
                  
                  
