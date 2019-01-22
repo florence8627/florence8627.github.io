@@ -105,6 +105,7 @@
 <script src="https://cdn.rawgit.com/gokertanrisever/leaflet-ruler/master/src/leaflet-ruler.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
 <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+<script src="https://togetherjs.com/togetherjs-min.js"></script>
 <script>
 // map box tile layer
 var tiles_dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -331,6 +332,11 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 
 d3.select(".close").on("click", function(){d3.select("#info-panel").style("display","none")});
 
+
+// testing collaborative js
+L.easyButton('<img src="images//collaborative.png">', function(btn,map){
+TogetherJS(this); 
+}).addTo(map);
 
 
 d3.json("features-edit.geojson", function(data) { 
