@@ -5,33 +5,43 @@
 
     <style type="text/css">
         html { height: 100%; overflow:hidden;}
-        body { height: 100%; margin: 0; padding: 0 }
+        body { height: 100%; 
+        	   margin: 0; 
+        	   padding: 0 ;
+        	   font: 10px sans-serif;}
         #map-canvas { height: 95% }
         .panel{
         	position:absolute;
         	z-index:1000;
-        	left: 50px;
-        	top: 10px;
-        	width:65%;
-        	height:60%;
+        	left: 5%;
+        	top: 1%;
+        	width:40%;
+        	height:30%;
         	display:none;
+            align-content: left;
+
         }
 
 		.panel-content {
-		  background-color: #fefefe;
-		  margin:auto;
+		  background-color: #ffffff;
+		  opacity:0.80;
+		
 		  padding: 5px;
-		  border: 1px solid #888;
-		  width : 65%; /* Could be more or less, depending on screen size */
-		  height: 60%;
+		  /*border: 1px solid #888;*/
+		/*  width : 65%;  Could be more or less, depending on screen size 
+		  height: 60%;*/
+		  border: 1px solid gray;
+          border-radius: 25px;
+
+
 		}
 
 		/* The Close Button */
 		.close {
 		  color: #aaa;
 		  float: right;
-		  font-size: 20px;
 		  font-weight: bold;
+		  font-size:20px;
 		}
 
 		.close:hover,
@@ -41,13 +51,16 @@
 		  cursor: pointer;
 		}
 
-		.axis path,
-		.axis line {
+		.x_axis path,
+		.y_axis path,
+		.x_axis line,
+		.y_axis line{
 		  fill: none;
 		  stroke: #000;
 		  shape-rendering: crispEdges;
-		  opacity:0.3;
+		  opacity:1;
 		  width:0.5;
+		  stroke-width:1px;
 		}
 
 
@@ -55,7 +68,7 @@
 		.line {
 		  fill: none;
 		  stroke: steelblue;
-		  stroke-width: 1.5px;
+		  stroke-width: 2px;
 		}
     </style>
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" /> -->
@@ -66,7 +79,7 @@
 </head>
 <body>
   <div id="info-panel" class="panel">
-  	<div class="panel-content">
+  	<div class ="panel-content">
   	<!-- the close button for the panel  -->
   	<span class="close">&times;</span>
   	
@@ -180,14 +193,15 @@ L.easyButton('<img src="images//rotation.png">', function(btn, map){
     map.setBearing(bearing);
 }).addTo( map );
 
+
 // adding additional info panel 
 L.easyButton('<img src="images//weather.png">', function(btn,map){
 	d3.select("#info-panel").style("display","block");
 	//drawlinegraph
 	     // set the dimensions and margins of the graph
-         var margin = {top: 20, right: 110, bottom: 30, left: 40},
-         width = 700 - margin.left - margin.right,
-         height = 200 - margin.top - margin.bottom;
+         var margin = {top: 5, right: 90, bottom: 30, left: 40},
+         width = document.getElementById("info-panel").clientWidth - margin.left - margin.right,
+         height = document.getElementById("info-panel").clientHeight - margin.top - margin.bottom;
          var svg = d3.select(".panel-content").append("svg")
    					 .attr("width", width + margin.left + margin.right)
    					 .attr("height", height + margin.top + margin.bottom)
@@ -206,15 +220,22 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 
 		var xAxis = d3.svg.axis()
 		    .scale(x)
-		    .orient("bottom");
-            console.log(xAxis);
+		    .orient("bottom")
+		    .tickFormat(function(date){
+				    if (d3.time.year(date) < date) {
+				      return d3.time.format('%b')(date);
+				    } else {
+				      return d3.time.format('%Y')(date);
+				    }
+                    });
+           
 
 		var yAxis = d3.svg.axis()
 		    .scale(y)
-		    .orient("left");
+		    .orient("left")
+		    .ticks(6);
 
 		var line = d3.svg.line()
-		    .interpolate("basis")
 		    .x(function(d) { return x(d.date); })
 		    .y(function(d) { return y(d.para_value); });
 
@@ -240,25 +261,25 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 		    };
 		  });
         
-          console.log(weather_parameters);
+          //console.log(weather_parameters);
 
 		  x.domain(d3.extent(data, function(d) { return d.date; }));
 
 		  y.domain([
-		    0,
+		    4,
 		    d3.max(weather_parameters, function(c) { return d3.max(c.values, function(v) { return v.para_value; }); })
 		  ]);
 
-          console.log(x.domain);
+       
 		  svg = d3.select("#weather-chart")
 
 		  svg.append("g")
-		      .attr("class", "x axis")
+		      .attr("class", "x_axis")
 		      .attr("transform", "translate(0," + height + ")")
 		      .call(xAxis);
 
 		  svg.append("g")
-		      .attr("class", "y axis")
+		      .attr("class", "y_axis")
 		      .call(yAxis)
 		    .append("text")
 		      .attr("transform", "rotate(-90)")
@@ -283,7 +304,17 @@ L.easyButton('<img src="images//weather.png">', function(btn,map){
 		      .attr("x", 3)
 		      .attr("dy", ".35em")
 		      .text(function(d) { return d.name; });
-		});
+
+		  info.selectAll("circle")
+		      .data(function(d){return d.values})
+		      .enter()
+		      .append("circle")
+		      .attr("r",3)
+              .attr("cx", function(d){return x(d.date);})
+              .attr("cy", function(d){return y(d.para_value);})
+              .style("fill", function(d,i,j){return color(weather_parameters[j].name);});
+
+});
 
 }).addTo(map);
 d3.select(".close").on("click", function(){d3.select("#info-panel").style("display","none")});
