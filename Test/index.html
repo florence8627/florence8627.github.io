@@ -164,7 +164,7 @@ var upd = sel.selectAll('path').data(buildings);
     .attr('stroke', "orange")
     .attr('stroke-width', 1 / proj.scale)
     .append("title")
-    .text(function(d){return d.properties.name});
+    .text(function(d){return d.properties.name.toUpperCase()+": "+d.properties.other_tags});
 
 
   upd.enter()
@@ -365,8 +365,28 @@ slider.append("g").attr("class", "x axis").call(d3.svg.axis().scale(x).orient("b
       .attr("class", "halo");
 var handle = slider.append("circle").attr("class", "handle").attr("r", 10);
 
-d3.csv("consump_all.csv", function(data){
-   
+d3.csv("consump_all_monthlydailysum.csv", function(data){
+
+	 building_no = [1,2,3,4,5,50,6,61,67,68,7,73,84,87,88,89,90,9,92,62];
+            buildings_max = {}
+            buildings_min = {}
+            buildings_mean= {}
+            for (i=0; i<building_no.length;i++){
+               building_data = data.map(function(d){return parseFloat(d["Building_"+building_no[i]])});
+	           max_value = d3.max(building_data);
+	           min_value = d3.min(building_data);  
+	           mean_value = d3.mean(building_data);
+	           buildings_max["Building_"+building_no[i]] = max_value;
+	           buildings_min["Building_"+building_no[i]] = min_value;
+	           buildings_mean["Building_"+building_no[i]] = mean_value;
+	          
+               }
+              global_max = d3.max(Object.values(buildings_max));
+              global_min = d3.min(Object.values(buildings_min));
+              global_mean = d3.mean(Object.values(buildings_mean));
+              console.log(buildings_mean);
+              console.log(global_max);
+              console.log(global_mean);
     brush.on("brush", function(){
             var value = brush.extent()[0];
 
@@ -378,15 +398,13 @@ d3.csv("consump_all.csv", function(data){
             handle.attr("cx", x(value));
             var month = Math.round(value);
 
-            // console.log(month);
-            // console.log(data[month-5]["Building_5"]);
+          
+           
 
-            building_no = [1,10,11,12,15,16,17,18,19,2,20,21,22,23,24,25,26,27,28,29,30,31,32,33,35,36,37,38,4,40,41,42,43,44,45,46,47,48,5,53,54,56,59,6,61,62,63,64,67,68,69,7,70,72,73,74,75,76,77,8,81,82,84,85,86,87,88,89,9,90];
-            for (i=0; i<building_no.length;i++){
-	           max_value = d3.max(data.map(function(d){return d["Building_"+building_no[i]]}));
-	           min_value = d3.min(data.map(function(d){return d["Building_"+building_no[i]]}));        
-              
-               d3.select("#building_"+building_no[i]).attr("fill", colorcode(data[month-6]["Building_"+building_no[i]],0, 1900000));
+             for (i=0; i<building_no.length;i++){
+               consump = data[month-6]["Building_"+building_no[i]];
+
+               d3.selectAll("#building_"+building_no[i]).attr("fill", colorcode(consump, 0, global_max, global_mean));
                 
 
                }
@@ -395,24 +413,40 @@ d3.csv("consump_all.csv", function(data){
                  
               
              });
-    
+ 
   slider.call(brush);
 });
 
 //slider animation introduction
 slider.call(brush.event).transition().delay(20).duration(10000).call(brush.extent([17, 17])).call(brush.event);
 
-function colorcode(Consumption, min, max){
+function colorcode(Consumption, min, max, mean){
    //console.log(Consumption);
-  if (Consumption== -1){
-  	
-  	return "rgb(0.9,0.9,0.9)";
+  if(typeof Consumption === 'undefined'){
+  	return "rgb(250,250,250)";
   }
-  if(Consumption!=-1){
-      var hue = 0.5-((Consumption-min)/(max-min))*0.5;
+  if (Consumption== 0){
+  	
+  	return "rgb(100,100,100)";
+  }
+
+ if(Consumption>global_mean){ 
+  	  
+      var hue = (1-Math.log(Consumption)/Math.log(global_max))*0.6;
 	  rgb_color = HSVtoRGB(hue,1,1);
 	  //console.log(Consumption);
 	  return "rgb("+rgb_color.r+","+rgb_color.g+","+rgb_color.b+")";
+	 
+  }
+
+  if(Consumption!=0 && typeof Consumption != 'undefined'&& Consumption<=1.5*global_mean){ 
+  	  
+      //var hue = (1-(Consumption-min)/(max-min))*0.5;
+      var hue = (1-Math.log(Consumption)/Math.log(1.5*global_mean))*0.6;
+	  rgb_color = HSVtoRGB(hue,1,1);
+	  //console.log(Consumption);
+	  return "rgb("+rgb_color.r+","+rgb_color.g+","+rgb_color.b+")";
+	 
   }
 }
 function HSVtoRGB(h, s, v) {
