@@ -117,11 +117,16 @@ var tiles_dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.p
     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
 });
 
-var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    id: 'mapbox.streets-satellite',
-    maxZoom:30,
-    accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
+// var tiles_satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+//     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+//     id: 'mapbox.streets-satellite',
+//     maxZoom:30,
+//     accessToken: 'pk.eyJ1IjoiZmxvcmVuY2U4NjI3IiwiYSI6ImNqb294Mmk1MTAzcGQzcG14cXpqZHh1YmMifQ.ahUeysh9RSQJ4jegcGrr4w'
+// });
+var tiles_satellite = L.tileLayer('https://api.nearmap.com/tiles/v3/Vert/{z}/{x}/{y}.png?apikey={accessToken}', {
+ 
+    accessToken: 'ZDZiOWU0NjctY2NjYS00YWVmLThhNWMtOGM2NTI4N2ZiZGYw'
+
 });
 
 var bearing = 0;
@@ -153,6 +158,14 @@ var buildingsOverlay = L.d3SvgOverlay(function(sel, proj) {
 	
 var upd = sel.selectAll('path').data(buildings);
   
+    upd.enter()
+     .append('path')
+     .filter(function(d){return d.properties.id.includes("NetworkLine")})
+     .attr("id", function (d) {return d.properties.id})
+     .attr('d', proj.pathFromGeojson)  
+     .attr('fill', "blue")
+     .attr("fill-opacity","1")
+     .attr('stroke-width', "0")
 
   upd.enter()
     .append('path')
@@ -178,8 +191,8 @@ var upd = sel.selectAll('path').data(buildings);
      .append("title")
      .text(function(d){return d.properties.name});
 
-   
-    
+
+ 
 });
 
 
@@ -341,7 +354,7 @@ TogetherJS(this);
 }).addTo(map);
 
 
-d3.json("features-edit.geojson", function(data) { 
+d3.json("Feature-withnetwork.geojson", function(data) { 
   buildings= data.features; 
   //console.log(buildings);
   buildingsOverlay.addTo(map) 
@@ -432,7 +445,7 @@ function colorcode(Consumption, min, max, mean){
 
  if(Consumption>global_mean){ 
   	  
-      var hue = (1-Math.log(Consumption)/Math.log(global_max))*0.6;
+      var hue = (1-Math.log(Consumption)/Math.log(global_max))*0.5;
 	  rgb_color = HSVtoRGB(hue,1,1);
 	  //console.log(Consumption);
 	  return "rgb("+rgb_color.r+","+rgb_color.g+","+rgb_color.b+")";
@@ -442,7 +455,7 @@ function colorcode(Consumption, min, max, mean){
   if(Consumption!=0 && typeof Consumption != 'undefined'&& Consumption<=1.5*global_mean){ 
   	  
       //var hue = (1-(Consumption-min)/(max-min))*0.5;
-      var hue = (1-Math.log(Consumption)/Math.log(1.5*global_mean))*0.6;
+      var hue = (1-Math.log(Consumption)/Math.log(1.5*global_mean))*0.5;
 	  rgb_color = HSVtoRGB(hue,1,1);
 	  //console.log(Consumption);
 	  return "rgb("+rgb_color.r+","+rgb_color.g+","+rgb_color.b+")";
